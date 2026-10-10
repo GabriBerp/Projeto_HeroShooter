@@ -110,7 +110,7 @@ public class EnemyNavmesh : MonoBehaviour
             float dist = Vector3.Distance(transform.position, aliado.transform.position);
             if (dist < allyBackupDistance && !aliado.isRunningAway) // se o caba ta com medo, ele caga pros aliados dele
             {
-                aliado.ChangeState(EnemyState.Pursuit);
+                aliado.agent.SetDestination(transform.position);
             }
         }
     }
