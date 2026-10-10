@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.InputSystem;
 using System.Collections;
+using static EnemyNavmesh;
 
 public class ShootPool : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ShootPool : MonoBehaviour
 
     [Header("Enemy Section")]
     public bool isEnemy = false;
+    public EnemyNavmesh navmesh;
     private bool canShoot = false;
     private float fireRate = 0.5f;
     private float nextFireTime = 0f;
@@ -65,7 +67,7 @@ public class ShootPool : MonoBehaviour
         if (isEnemy)
         {
             canShoot = false;
-            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, Mathf.Infinity, layerMask))
+            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, Mathf.Infinity, layerMask) && navmesh.currentState == EnemyState.Pursuit)
             {
                 canShoot = true;
                 Debug.DrawLine(transform.position, hit.point, Color.green);

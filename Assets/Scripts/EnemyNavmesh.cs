@@ -108,7 +108,7 @@ public class EnemyNavmesh : MonoBehaviour
         foreach (EnemyNavmesh aliado in todosInimigos)
         {
             float dist = Vector3.Distance(transform.position, aliado.transform.position);
-            if (dist < allyBackupDistance || !aliado.isRunningAway)
+            if (dist < allyBackupDistance && !aliado.isRunningAway) // se o caba ta com medo, ele caga pros aliados dele
             {
                 aliado.ChangeState(EnemyState.Pursuit);
             }
@@ -134,13 +134,18 @@ public class EnemyNavmesh : MonoBehaviour
     public void OnDamage()
     {
         life--;
-        if (life <= maxLife / 2)
+        float porc = life > 0f ? maxLife / life : 0f;
+        float rand = Random.value;
+        if (rand >= porc) // na logica: quanto menor a vida, mais chances
         {
-            float rand = Random.value;
-            if (rand <= 0.5f)
-            {
-                RunAway();
-            }
+            RunAway();
+            CallBackup(); // o cara com medo grita por socorro
+            return;
+        }
+        if (!isRunningAway) // prevenção caso seja atingido enquanto ja esta fugindo
+        {
+            ChangeState(EnemyState.Pursuit);
+            CallBackup(); // o cara puto chama a galera pra cima de ti
         }
     }
 }
