@@ -5,6 +5,7 @@ using static EnemyNavmesh;
 public class Projectile : MonoBehaviour
 {
     public float speed = 10f;
+    public float damage = 25f;
     private Vector3 direction;
     private ShootPool Shootpool;
     public void StartProjectile(Vector3 direction, ShootPool shooter)
@@ -23,10 +24,10 @@ public class Projectile : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            EnemyNavmesh navmesh = collision.gameObject.GetComponent<EnemyNavmesh>();
-            if (navmesh != null)
+            EnemyHealth enemyHealth = collision.gameObject.GetComponent<EnemyHealth>();
+            if (enemyHealth != null)
             {
-                navmesh.OnDamage();
+                enemyHealth.TakeDamage(damage);
             }
         }
         Shootpool.ReturnProjectile(gameObject);  

@@ -10,6 +10,14 @@ public class CharacterMove : MonoBehaviour
     private float staminaMax = 100f;
     private float stamina;
 
+    [Header("Hability Area")]
+    public float hab1Cooldown = 8f;
+    public float hab2Cooldown = 14f;
+    public float hab3Cooldown = 25f;
+    private float hab1Timer = 0f;
+    private float hab2Timer = 0f;
+    private float hab3Timer = 0f;
+
     void Start()
     {
         stamina = staminaMax;    
@@ -21,6 +29,7 @@ public class CharacterMove : MonoBehaviour
         direction = Vector3.zero;
 
         HandleMovement();
+        HandleHability();
         HandleRun();
 
     }
@@ -47,6 +56,36 @@ public class CharacterMove : MonoBehaviour
         }else if (Keyboard.current[Key.A].isPressed)
         {
             direction += transform.right * -1;
+        }
+    }
+
+    void HandleHability()
+    {
+        // Habilidade 1 - C
+        if (Keyboard.current[Key.C].wasPressedThisFrame)
+        {
+            /*===
+            CONCEITO: Modo Furtivo
+            Fica invisivel, indetectavel e rapido.
+            Se disparar sai do modo furtivo, mas o tiro da o dobro de dano.
+            Dura no maximo 10s, mas se apertar novamente o botão da habilidade, sai do modo mais cedo.
+            ===*/
+        }
+        // Habilidade 2 - Q
+        if (Keyboard.current[Key.Q].wasPressedThisFrame)
+        {
+            /*===
+            CONCEITO: sei la porra
+            
+            ===*/
+        }
+        // Habilidade 3 - E
+        if (Keyboard.current[Key.E].wasPressedThisFrame)
+        {
+            /*===
+            CONCEITO: .
+            
+            ===*/
         }
     }
 

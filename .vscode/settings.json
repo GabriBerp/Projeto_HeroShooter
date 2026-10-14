@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "ImputSystemNew.slnx"
+    "dotnet.defaultSolution": "Projeto_HeroShooter.slnx"
 }

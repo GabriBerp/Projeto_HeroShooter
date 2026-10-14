@@ -8,16 +8,18 @@ public class EnemyNavmesh : MonoBehaviour
     public Transform[] waypoints;
 
     public float baseSpeed;
-    public int maxLife = 10;
-    public int life;
     public float losePlayerDistance = 5f;
     public float detectPlayerDistance = 20f;
     public float allyBackupDistance = 10f;
     public bool isRunningAway = false;
 
+    public Light visor;
+    public Color neutralColor = Color.white;
+    public Color angryColor = Color.red;
+
     void Start()
     {
-        life = maxLife;   
+        
     }
 
     public enum EnemyState
@@ -67,6 +69,10 @@ public class EnemyNavmesh : MonoBehaviour
             if (dist >= losePlayerDistance)
             {
                 agent.ResetPath();
+                if (visor != null)
+                {
+                    visor.color = neutralColor;
+                }
                 ChangeState(EnemyState.WayPatrol);
             }
         }
@@ -97,12 +103,16 @@ public class EnemyNavmesh : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, detectPlayerDistance, layerMask) || Vector3.Distance(transform.position, player.position) <= detectPlayerDistance / 2)
         {
+            if (visor != null)
+            {
+                visor.color = angryColor;
+            }
             ChangeState(EnemyState.Pursuit);
             CallBackup();
         }
     }
 
-    void CallBackup()
+    public void CallBackup()
     {
         EnemyNavmesh[] todosInimigos = FindObjectsByType<EnemyNavmesh>();
         foreach (EnemyNavmesh aliado in todosInimigos)
@@ -115,7 +125,7 @@ public class EnemyNavmesh : MonoBehaviour
         }
     }
 
-    void RunAway()
+    public void RunAway()
     {
         isRunningAway = true;
         float maxDist = 0f;
@@ -127,14 +137,18 @@ public class EnemyNavmesh : MonoBehaviour
         }
         agent.speed = baseSpeed * 2f;
         agent.SetDestination(highestWay.position);
+        if (visor != null)
+        {
+            visor.color = neutralColor;
+        }
         ChangeState(EnemyState.WayPatrol);
     }
     
     // Chama saporra quando toma dano
+    /*
     public void OnDamage()
     {
-        life--;
-        float porc = life > 0f ? maxLife / life : 0f;
+        float porc = currentHealth > 0f ? maxHealth / currentHealth : 0f;
         float rand = Random.value;
         if (rand >= porc) // na logica: quanto menor a vida, mais chances
         {
@@ -144,8 +158,13 @@ public class EnemyNavmesh : MonoBehaviour
         }
         if (!isRunningAway) // prevenção caso seja atingido enquanto ja esta fugindo
         {
+            if (visor != null)
+            {
+                visor.color = angryColor;
+            }
             ChangeState(EnemyState.Pursuit);
             CallBackup(); // o cara puto chama a galera pra cima de ti
         }
     }
+    */
 }
