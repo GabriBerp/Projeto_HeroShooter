@@ -1,15 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StaminaBar : MonoBehaviour
 {
     public CharacterMove player;
     private float val;
-    public RectTransform rectTrans;
+    public Image staminaBar;
 
     void Update()
     {
-        val = player.GetStamina() * 5f;
-        rectTrans.sizeDelta = new Vector2(val, rectTrans.sizeDelta.y);
+        val = player.GetStamina() / 100f;
+        staminaBar.fillAmount = val;
     }
 }
 

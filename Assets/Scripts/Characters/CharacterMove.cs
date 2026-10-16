@@ -3,24 +3,18 @@ using UnityEngine.InputSystem;
 
 public class CharacterMove : MonoBehaviour
 {
-    private float speed = 4.5f;
+    public float baseSpeed;
+    private float speed;
     public Rigidbody rb;
     private Vector3 direction;
     private bool onGround = true;
     private float staminaMax = 100f;
     private float stamina;
 
-    [Header("Hability Area")]
-    public float hab1Cooldown = 8f;
-    public float hab2Cooldown = 14f;
-    public float hab3Cooldown = 25f;
-    private float hab1Timer = 0f;
-    private float hab2Timer = 0f;
-    private float hab3Timer = 0f;
-
     void Start()
     {
         stamina = staminaMax;    
+        speed = baseSpeed;
     }
 
     void Update()
@@ -29,7 +23,6 @@ public class CharacterMove : MonoBehaviour
         direction = Vector3.zero;
 
         HandleMovement();
-        HandleHability();
         HandleRun();
 
     }
@@ -58,50 +51,19 @@ public class CharacterMove : MonoBehaviour
             direction += transform.right * -1;
         }
     }
-
-    void HandleHability()
-    {
-        // Habilidade 1 - C
-        if (Keyboard.current[Key.C].wasPressedThisFrame)
-        {
-            /*===
-            CONCEITO: Modo Furtivo
-            Fica invisivel, indetectavel e rapido.
-            Se disparar sai do modo furtivo, mas o tiro da o dobro de dano.
-            Dura no maximo 10s, mas se apertar novamente o botão da habilidade, sai do modo mais cedo.
-            ===*/
-        }
-        // Habilidade 2 - Q
-        if (Keyboard.current[Key.Q].wasPressedThisFrame)
-        {
-            /*===
-            CONCEITO: sei la porra
-            
-            ===*/
-        }
-        // Habilidade 3 - E
-        if (Keyboard.current[Key.E].wasPressedThisFrame)
-        {
-            /*===
-            CONCEITO: .
-            
-            ===*/
-        }
-    }
-
     void HandleRun()
     {
             if (Keyboard.current[Key.LeftShift].isPressed && stamina > 0f)
             {
-                speed = 7.5f;
+                speed = baseSpeed * 1.5f;
                 if (stamina > 0f)
                 {
-                    stamina -= 0.15f;
+                    stamina -= 0.25f;
                 }
             }
             else
             {
-                speed = 3.5f;
+                speed = baseSpeed;
                 if (stamina < staminaMax && !Keyboard.current[Key.LeftShift].isPressed)
                 {
                     if (direction != Vector3.zero)
