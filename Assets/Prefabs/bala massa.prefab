@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.73058, y: 0.5, z: -7.70706}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: dfe2025a863604a498120475bcd86b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -127,7 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   speed: 60
-  damage: 125
+  damage: 1
+  lifetime: 1
 --- !u!54 &-5468163669634504157
 Rigidbody:
   m_ObjectHideFlags: 0

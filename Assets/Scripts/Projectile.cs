@@ -6,12 +6,14 @@ public class Projectile : MonoBehaviour
 {
     public float speed = 10f;
     public float damage = 25f;
+    public float lifetime = 1f;
     private Vector3 direction;
     private ShootPool Shootpool;
-    public void StartProjectile(Vector3 direction, ShootPool shooter)
+    public void StartProjectile(Vector3 direction, ShootPool shooter, float ltime)
     {
         this.direction = direction;
         this.Shootpool = shooter;
+        this.lifetime = ltime;
         StartCoroutine(Kill());
     }
 
@@ -35,7 +37,7 @@ public class Projectile : MonoBehaviour
 
     IEnumerator Kill() // Pra caso não acerte nada
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(lifetime);
         Shootpool.ReturnProjectile(gameObject);
     }
 }

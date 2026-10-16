@@ -28,6 +28,7 @@ public class CharacterControll : MonoBehaviour
     public Material[] visorMaterial;
     private CharacterAbility characterAbility;
     private CharacterMove characterMove;
+    public ShootPool shootPool;
     [Header("Light Parameter")]
     public Light flashlight;
 
@@ -43,28 +44,49 @@ public class CharacterControll : MonoBehaviour
         {
             case CharacterType.HunterCharacter: 
                 characterAbility = gameObject.AddComponent<HunterCharacter>();
+                characterAbility.hab1Cooldown = 25f;
+                characterAbility.hab2Cooldown = 50f;
+
                 capsuleMesh.material = characterMaterial[0];
                 visorMesh.material = visorMaterial[0];
                 minimapMesh.material = visorMaterial[0];
                 characterMove.baseSpeed = 4f;
                 maxHealth = 20f;
+                shootPool.SetWeapon(ShootPool.WeaponType.Shotgun);
                 break;
             case CharacterType.GhostCharacter: 
                 characterAbility = gameObject.AddComponent<GhostCharacter>();
+                characterAbility.hab1Cooldown = 25f;
+                characterAbility.hab2Cooldown = 50f;
+
                 capsuleMesh.material = characterMaterial[1];
                 visorMesh.material = visorMaterial[1];
                 minimapMesh.material = visorMaterial[1];
                 characterMove.baseSpeed = 5f;
                 maxHealth = 14f;
+                shootPool.SetWeapon(ShootPool.WeaponType.Silent_Revolver);
                 break;
             case CharacterType.EnginerCharacter: 
                 characterAbility = gameObject.AddComponent<EnginerCharacter>();
+                characterAbility.hab1Cooldown = 25f;
+                characterAbility.hab2Cooldown = 50f;
+                
                 capsuleMesh.material = characterMaterial[2];
                 visorMesh.material = visorMaterial[2];
                 minimapMesh.material = visorMaterial[2];
                 characterMove.baseSpeed = 4.5f;
                 maxHealth = 16f;
+                shootPool.SetWeapon(ShootPool.WeaponType.Nailgun);
                 break;
         }
+    }
+
+    void Start() {
+        currentHealth = maxHealth;
+    } 
+
+    public void TakeDamage(float amount)
+    {
+        currentHealth -= amount;
     }
 }

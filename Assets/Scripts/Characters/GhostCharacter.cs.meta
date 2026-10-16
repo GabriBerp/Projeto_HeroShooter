@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: 41fb37894a378d54297f43e0353e43e5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - smokeBombPrefab: {fileID: 5204398019508188323, guid: 51e8dafaa41823746b95e11f2bcb1e6d, type: 3}
+  - throwOrigin: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

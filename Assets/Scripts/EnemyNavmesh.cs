@@ -17,11 +17,6 @@ public class EnemyNavmesh : MonoBehaviour
     public Color neutralColor = Color.white;
     public Color angryColor = Color.red;
 
-    void Start()
-    {
-        
-    }
-
     public enum EnemyState
     {
         WayPatrol,
@@ -30,9 +25,26 @@ public class EnemyNavmesh : MonoBehaviour
 
     public EnemyState currentState = EnemyState.WayPatrol;
     public LayerMask layerMask;
+    public bool inSmoke = false;
+    public float smokeMemory = 0.3f;   // tempo "cego" depois do último contato
+    float smokeTimer;
+
+    public void MarkInSmoke()
+    {
+        inSmoke = true;
+        smokeTimer = smokeMemory;
+    }
+
+    void UpdateSmoke()
+    {
+        if (!inSmoke) return;
+        smokeTimer -= Time.deltaTime;
+        if (smokeTimer <= 0f) inSmoke = false;
+    }
 
     private void Update()
     {
+        UpdateSmoke();
         FiniteStateMachine();
     }
 
@@ -58,6 +70,14 @@ public class EnemyNavmesh : MonoBehaviour
 
     void Pursuit()
     {
+        if (inSmoke)
+        {
+            agent.ResetPath();
+            if (visor != null) visor.color = neutralColor;
+            ChangeState(EnemyState.WayPatrol);
+            return;
+        }
+        
         if (player != null || !isRunningAway)
         {
             agent.speed = baseSpeed;
@@ -96,7 +116,7 @@ public class EnemyNavmesh : MonoBehaviour
 
     void SearchPlayer()
     {
-        if (isRunningAway)
+        if (isRunningAway || inSmoke)
         {
             return;
         }
