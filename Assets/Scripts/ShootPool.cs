@@ -76,6 +76,8 @@ public class ShootPool : MonoBehaviour
     private bool reloading = false;
     private Coroutine reloadRoutine;
     private float nextFireTime = 0f;
+    public bool infiniteAmmo = false;
+    public System.Action OnShoot;
 
     [Header("Character Weapon Section")]
     public WeaponType weaponType = WeaponType.Shotgun;
@@ -88,6 +90,13 @@ public class ShootPool : MonoBehaviour
     public float enemyFireDelayMultiplier = 1.5f;
     public LayerMask layerMask;
     public Transform player;
+    [Header("Multi Fire Point / Mira (Drone)")]
+    public Transform[] firePoints;
+    public bool convergeOnCrosshair = false;
+    public Camera aimCamera;
+    public float aimMaxDistance = 100f;
+    public LayerMask aimMask;
+    private Transform[] activePoints;
 
     void Awake()
     {
@@ -96,10 +105,15 @@ public class ShootPool : MonoBehaviour
            SetWeapon(weaponType); 
         }
     }
+
     public void SetWeapon(WeaponType newType)
     {
         weaponType = newType;
         stats = GetStats(weaponType);
+
+        activePoints = (firePoints != null && firePoints.Length > 0)
+            ? firePoints
+            : new[] { firePoint };
 
         if (reloadRoutine != null)
         {
@@ -111,7 +125,7 @@ public class ShootPool : MonoBehaviour
         pool?.Clear();
         activeProjectiles = 0;
 
-        poolSize = stats.magazineSize * stats.pellets;
+        poolSize = stats.magazineSize * stats.pellets * activePoints.Length;
         currentAmmo = stats.magazineSize;
 
         pool = new ObjectPool<GameObject>(
@@ -139,7 +153,7 @@ public class ShootPool : MonoBehaviour
             }
 
             if (Keyboard.current[Key.R].wasPressedThisFrame
-                && currentAmmo < stats.magazineSize && !reloading)
+    && !infiniteAmmo && currentAmmo < stats.magazineSize && !reloading)
             {
                 reloadRoutine = StartCoroutine(Reload());
             }
@@ -200,45 +214,64 @@ public class ShootPool : MonoBehaviour
 
     void Shoot()
     {
-        currentAmmo--;
+        if (!infiniteAmmo) currentAmmo--;
+        OnShoot?.Invoke();
 
-        for (int i = 0; i < stats.pellets; i++)
+        bool converge = convergeOnCrosshair && aimCamera != null;
+        Vector3 aimPoint = converge ? GetAimPoint() : Vector3.zero;
+
+        float tim = 0f;
+        switch (weaponType)
         {
-            if (activeProjectiles >= poolSize)
+            case WeaponType.Shotgun: tim = 0.5f; break;
+            case WeaponType.Silent_Revolver: tim = 5f; break;
+            case WeaponType.Nailgun: tim = 2.5f; break;
+        }
+
+        foreach (Transform fp in activePoints)
+        {
+            Quaternion baseRot = fp.rotation;
+            if (converge)
             {
-                break;
+                Vector3 toAim = aimPoint - fp.position;
+                if (toAim.sqrMagnitude > 0.01f)
+                    baseRot = Quaternion.LookRotation(toAim);
             }
 
-            GameObject projectile = pool.Get();
-            activeProjectiles++;
-
-            Quaternion rotation = GetSpreadRotation(stats.spreadAngle);
-            Vector3 direction = rotation * Vector3.forward;
-            float tim = 0f;
-            switch (weaponType)
+            for (int i = 0; i < stats.pellets; i++)
             {
-                case WeaponType.Shotgun: tim = 0.5f;break;
-                case WeaponType.Silent_Revolver: tim = 5f;break;
-                case WeaponType.Nailgun: tim = 2.5f;break;
+                if (activeProjectiles >= poolSize) return;
+
+                GameObject projectile = pool.Get();
+                activeProjectiles++;
+
+                Quaternion rotation = GetSpreadRotation(baseRot, stats.spreadAngle);
+                Vector3 direction = rotation * Vector3.forward;
+
+                projectile.transform.SetPositionAndRotation(fp.position, rotation);
+                projectile.GetComponent<Projectile>().StartProjectile(direction, this, tim);
             }
-            projectile.transform.SetPositionAndRotation(firePoint.position, rotation);
-            projectile.GetComponent<Projectile>().StartProjectile(direction, this, tim);
         }
     }
 
-    Quaternion GetSpreadRotation(float angle)
+    Quaternion GetSpreadRotation(Quaternion baseRot, float angle)
     {
-        if (angle <= 0f)
-        {
-            return firePoint.rotation;
-        }
+        if (angle <= 0f) return baseRot;
 
         Quaternion offset = Quaternion.Euler(
             Random.Range(-angle, angle),
             Random.Range(-angle, angle),
             0f
         );
-        return firePoint.rotation * offset;
+        return baseRot * offset;
+    }
+
+    Vector3 GetAimPoint()
+    {
+        Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        if (Physics.Raycast(ray, out RaycastHit hit, aimMaxDistance, aimMask, QueryTriggerInteraction.Ignore))
+            return hit.point;
+        return ray.GetPoint(aimMaxDistance);
     }
 
     public void ReturnProjectile(GameObject projectile)

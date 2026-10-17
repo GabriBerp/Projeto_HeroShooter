@@ -4,6 +4,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Camera))]
 public class MouseOrbit : MonoBehaviour
 {
+    [Header("Drone")]
+    public Transform droneTarget;
+    public float droneZoomFOV = 25f;
+    public float droneMinPitch = -89f;
+    public float droneMaxPitch = 89f;
+
+    private float droneBlend;
+    private Vector3 lastDronePos;
     [Header("Alvo")]
     public Transform player;
     [Tooltip("Ponto que a camera orbita (altura da cabeca/ombros, relativo ao player)")]
@@ -66,44 +74,54 @@ public class MouseOrbit : MonoBehaviour
 
     void LateUpdate()
     {
+        bool inDrone = droneTarget != null;
         if (player == null) return;
 
         // --- Rotacao pelo mouse ---
         Vector2 delta = Mouse.current.delta.ReadValue() * MouseSensitivity;
         rotX += delta.x;
         rotY -= delta.y;
-        rotY = Mathf.Clamp(rotY, minPitch, maxPitch);
+        rotY = inDrone
+            ? Mathf.Clamp(rotY, droneMinPitch, droneMaxPitch)
+            : Mathf.Clamp(rotY, minPitch, maxPitch);
 
         Quaternion rotation = Quaternion.Euler(rotY, rotX, 0f);
 
-        // --- Transicao suave (independente de framerate) ---
         float t = 1f - Mathf.Exp(-transitionSpeed * Time.deltaTime);
 
-        float targetDistance = isZoom ? zoomDistance : distance;
-        Vector3 targetOffset = isZoom ? zoomOffset : shoulderOffset;
-        float targetFOV = isZoom ? zoomFOV : normalFOV;
+        // zoom do 3ª pessoa só vale fora do drone
+        bool zoomPlayer = isZoom && !inDrone;
+        float targetDistance = zoomPlayer ? zoomDistance : distance;
+        Vector3 targetOffset = zoomPlayer ? zoomOffset : shoulderOffset;
+        float targetFOV = inDrone ? (isZoom ? droneZoomFOV : normalFOV)
+                                : (isZoom ? zoomFOV : normalFOV);
 
         currentDistance = Mathf.Lerp(currentDistance, targetDistance, t);
         currentOffset = Vector3.Lerp(currentOffset, targetOffset, t);
         currentFOV = Mathf.Lerp(currentFOV, targetFOV, t);
 
-        // --- Posicao: o offset agora e LOCAL (gira junto com a camera) ---
+        // --- Posicao: mistura entre a câmera do player e a do drone ---
         Vector3 pivot = player.position + pivotOffset;
         Vector3 localOffset = new Vector3(currentOffset.x, currentOffset.y, currentOffset.z - currentDistance);
+        Vector3 playerCamPos = pivot + rotation * localOffset;
 
-        transform.position = pivot + rotation * localOffset;
+        if (inDrone)
+        {
+            lastDronePos = droneTarget.position;
+            droneTarget.rotation = rotation;   // o drone gira/inclina pra onde você olha
+        }
+        droneBlend = Mathf.Lerp(droneBlend, inDrone ? 1f : 0f, t);
+
+        transform.position = Vector3.Lerp(playerCamPos, lastDronePos, droneBlend);
         transform.rotation = rotation;
         cam.fieldOfView = currentFOV;
 
         // --- Esconde o corpo quando a camera estiver dentro da cabeca ---
-        bool hide = currentDistance < hideThreshold;
-        foreach (var r in playerRenderers)
-        {
-            if (r != null) r.enabled = !hide;
-        }
+        bool hide = !inDrone && currentDistance < hideThreshold;
+        foreach (var r in playerRenderers) { if (r != null) r.enabled = !hide; }
 
         // --- Player acompanha a direcao da camera durante o zoom ---
-        if (rotatePlayerOnZoom && isZoom)
+        if (rotatePlayerOnZoom && zoomPlayer)
         {
             Quaternion targetYaw = Quaternion.Euler(0f, rotX, 0f);
             player.rotation = Quaternion.Slerp(player.rotation, targetYaw, t);

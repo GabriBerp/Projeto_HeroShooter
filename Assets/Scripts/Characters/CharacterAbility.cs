@@ -33,7 +33,7 @@ public class CharacterAbility : MonoBehaviour
         hab2Timer = Mathf.Min(hab2Timer + Time.deltaTime, hab2Cooldown);
     }
 
-    protected void HandleAbility()
+    protected virtual void HandleAbility()
     {
         if (Keyboard.current == null) return;
 

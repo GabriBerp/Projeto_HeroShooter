@@ -31,6 +31,8 @@ public class CharacterControll : MonoBehaviour
     public ShootPool shootPool;
     [Header("Light Parameter")]
     public Light flashlight;
+    [Header("Engineer")]
+    public GameObject dronePrefab;
 
     void Awake() {
         characterMove = gameObject.GetComponent<CharacterMove>();
