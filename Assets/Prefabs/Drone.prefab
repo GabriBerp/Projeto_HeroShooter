@@ -580,7 +580,6 @@ MonoBehaviour:
   drainPerSecond: 1
   lifeCostPerShot: 0.15
   shootPool: {fileID: 2683460305374258385}
-  renderers: []
 --- !u!114 &2683460305374258385
 MonoBehaviour:
   m_ObjectHideFlags: 0

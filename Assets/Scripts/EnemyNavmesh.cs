@@ -23,11 +23,23 @@ public class EnemyNavmesh : MonoBehaviour
         Pursuit
     }
 
+    public enum EnemyType
+    {
+        RangedEnemy,
+        CloseCombatEnemy,
+    }
+
     public EnemyState currentState = EnemyState.WayPatrol;
+    public EnemyType enemyType = EnemyType.CloseCombatEnemy;
     public LayerMask layerMask;
     public bool inSmoke = false;
     public float smokeMemory = 0.3f;   // tempo "cego" depois do último contato
     float smokeTimer;
+
+    public void Init()
+    {
+        
+    }
 
     public void MarkInSmoke()
     {
@@ -42,7 +54,7 @@ public class EnemyNavmesh : MonoBehaviour
         if (smokeTimer <= 0f) inSmoke = false;
     }
 
-    private void Update()
+    void Update()
     {
         UpdateSmoke();
         FiniteStateMachine();
@@ -80,8 +92,8 @@ public class EnemyNavmesh : MonoBehaviour
         
         if (player != null || !isRunningAway)
         {
-            agent.speed = baseSpeed;
-            agent.stoppingDistance = 6f;
+            agent.speed = enemyType == EnemyType.CloseCombatEnemy ? baseSpeed * 1.5f : baseSpeed;
+            agent.stoppingDistance = enemyType == EnemyType.CloseCombatEnemy ? 0f : 6f;
             agent.SetDestination(player.position);
             transform.LookAt(player);
 
@@ -163,28 +175,4 @@ public class EnemyNavmesh : MonoBehaviour
         }
         ChangeState(EnemyState.WayPatrol);
     }
-    
-    // Chama saporra quando toma dano
-    /*
-    public void OnDamage()
-    {
-        float porc = currentHealth > 0f ? maxHealth / currentHealth : 0f;
-        float rand = Random.value;
-        if (rand >= porc) // na logica: quanto menor a vida, mais chances
-        {
-            RunAway();
-            CallBackup(); // o cara com medo grita por socorro
-            return;
-        }
-        if (!isRunningAway) // prevenção caso seja atingido enquanto ja esta fugindo
-        {
-            if (visor != null)
-            {
-                visor.color = angryColor;
-            }
-            ChangeState(EnemyState.Pursuit);
-            CallBackup(); // o cara puto chama a galera pra cima de ti
-        }
-    }
-    */
 }
