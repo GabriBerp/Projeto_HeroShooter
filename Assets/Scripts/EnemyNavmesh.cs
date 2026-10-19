@@ -150,7 +150,7 @@ public class EnemyNavmesh : MonoBehaviour
         foreach (EnemyNavmesh aliado in todosInimigos)
         {
             float dist = Vector3.Distance(transform.position, aliado.transform.position);
-            if (dist < allyBackupDistance && !aliado.isRunningAway) // se o caba ta com medo, ele caga pros aliados dele
+            if (dist < allyBackupDistance && !aliado.isRunningAway && aliado != this) // se o caba ta com medo, ele caga pros aliados dele
             {
                 aliado.agent.SetDestination(transform.position);
             }

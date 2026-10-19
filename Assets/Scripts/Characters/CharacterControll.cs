@@ -33,6 +33,9 @@ public class CharacterControll : MonoBehaviour
     public Light flashlight;
     [Header("Engineer")]
     public GameObject dronePrefab;
+    [Header("Ghost")]
+    public GameObject smokeBombPrefab;
+
 
     void Awake() {
         characterMove = gameObject.GetComponent<CharacterMove>();
@@ -42,47 +45,92 @@ public class CharacterControll : MonoBehaviour
         e ainda de quebra é usado pra definir alguns valores tipo o material do modelo (so pra mudar corzinha), velocidade base, vida maxima e assim vai indo.
         Pra evitar trabalho a gente faz mais trabalho erriessi
         */
-        switch (GameMaster.Instance.id)
-        {
-            case 1: 
-                characterType = CharacterType.HunterCharacter;
-                characterAbility = gameObject.AddComponent<HunterCharacter>();
-                characterAbility.hab1Cooldown = 25f;
-                characterAbility.hab2Cooldown = 50f;
+        if (GameMaster.Instance != null){
+            switch (GameMaster.Instance.id)
+            {
+                case 1: 
+                    characterType = CharacterType.HunterCharacter;
+                    characterAbility = gameObject.AddComponent<HunterCharacter>();
+                    characterAbility.hab1Cooldown = 25f;
+                    characterAbility.hab2Cooldown = 50f;
 
-                capsuleMesh.material = characterMaterial[0];
-                visorMesh.material = visorMaterial[0];
-                minimapMesh.material = visorMaterial[0];
-                characterMove.baseSpeed = 4f;
-                maxHealth = 20f;
-                shootPool.SetWeapon(ShootPool.WeaponType.Shotgun);
-                break;
-            case 2: 
-                characterType = CharacterType.GhostCharacter;
-                characterAbility = gameObject.AddComponent<GhostCharacter>();
-                characterAbility.hab1Cooldown = 25f;
-                characterAbility.hab2Cooldown = 50f;
+                    capsuleMesh.material = characterMaterial[0];
+                    visorMesh.material = visorMaterial[0];
+                    minimapMesh.material = visorMaterial[0];
+                    characterMove.baseSpeed = 4f;
+                    maxHealth = 20f;
+                    shootPool.SetWeapon(ShootPool.WeaponType.Shotgun);
+                    break;
+                case 2: 
+                    characterType = CharacterType.GhostCharacter;
+                    characterAbility = gameObject.AddComponent<GhostCharacter>();
+                    characterAbility.hab1Cooldown = 25f;
+                    characterAbility.hab2Cooldown = 50f;
 
-                capsuleMesh.material = characterMaterial[1];
-                visorMesh.material = visorMaterial[1];
-                minimapMesh.material = visorMaterial[1];
-                characterMove.baseSpeed = 5f;
-                maxHealth = 14f;
-                shootPool.SetWeapon(ShootPool.WeaponType.Silent_Revolver);
-                break;
-            case 3: 
-                characterType = CharacterType.EnginerCharacter;
-                characterAbility = gameObject.AddComponent<EnginerCharacter>();
-                characterAbility.hab1Cooldown = 25f;
-                characterAbility.hab2Cooldown = 50f;
-                
-                capsuleMesh.material = characterMaterial[2];
-                visorMesh.material = visorMaterial[2];
-                minimapMesh.material = visorMaterial[2];
-                characterMove.baseSpeed = 4.5f;
-                maxHealth = 16f;
-                shootPool.SetWeapon(ShootPool.WeaponType.Nailgun);
-                break;
+                    capsuleMesh.material = characterMaterial[1];
+                    visorMesh.material = visorMaterial[1];
+                    minimapMesh.material = visorMaterial[1];
+                    characterMove.baseSpeed = 5f;
+                    maxHealth = 14f;
+                    shootPool.SetWeapon(ShootPool.WeaponType.Silent_Revolver);
+                    break;
+                case 3: 
+                    characterType = CharacterType.EnginerCharacter;
+                    characterAbility = gameObject.AddComponent<EnginerCharacter>();
+                    characterAbility.hab1Cooldown = 25f;
+                    characterAbility.hab2Cooldown = 50f;
+                    
+                    capsuleMesh.material = characterMaterial[2];
+                    visorMesh.material = visorMaterial[2];
+                    minimapMesh.material = visorMaterial[2];
+                    characterMove.baseSpeed = 4.5f;
+                    maxHealth = 16f;
+                    shootPool.SetWeapon(ShootPool.WeaponType.Nailgun);
+                    break;
+            }
+        }else{
+            switch (characterType)
+            {
+                case CharacterType.HunterCharacter: 
+                    // characterType = CharacterType.HunterCharacter;
+                    characterAbility = gameObject.AddComponent<HunterCharacter>();
+                    characterAbility.hab1Cooldown = 25f;
+                    characterAbility.hab2Cooldown = 50f;
+
+                    capsuleMesh.material = characterMaterial[0];
+                    visorMesh.material = visorMaterial[0];
+                    minimapMesh.material = visorMaterial[0];
+                    characterMove.baseSpeed = 4f;
+                    maxHealth = 20f;
+                    shootPool.SetWeapon(ShootPool.WeaponType.Shotgun);
+                    break;
+                case CharacterType.GhostCharacter: 
+                    // characterType = CharacterType.GhostCharacter;
+                    characterAbility = gameObject.AddComponent<GhostCharacter>();
+                    characterAbility.hab1Cooldown = 25f;
+                    characterAbility.hab2Cooldown = 50f;
+
+                    capsuleMesh.material = characterMaterial[1];
+                    visorMesh.material = visorMaterial[1];
+                    minimapMesh.material = visorMaterial[1];
+                    characterMove.baseSpeed = 5f;
+                    maxHealth = 14f;
+                    shootPool.SetWeapon(ShootPool.WeaponType.Silent_Revolver);
+                    break;
+                case CharacterType.EnginerCharacter: 
+                    // characterType = CharacterType.EnginerCharacter;
+                    characterAbility = gameObject.AddComponent<EnginerCharacter>();
+                    characterAbility.hab1Cooldown = 25f;
+                    characterAbility.hab2Cooldown = 50f;
+                    
+                    capsuleMesh.material = characterMaterial[2];
+                    visorMesh.material = visorMaterial[2];
+                    minimapMesh.material = visorMaterial[2];
+                    characterMove.baseSpeed = 4.5f;
+                    maxHealth = 16f;
+                    shootPool.SetWeapon(ShootPool.WeaponType.Nailgun);
+                    break;
+            }
         }
     }
 

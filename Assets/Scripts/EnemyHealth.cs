@@ -31,11 +31,7 @@ public class EnemyHealth : MonoBehaviour
         }
         if (!navmesh.isRunningAway) // prevenção caso seja atingido enquanto ja esta fugindo
         {
-            if (navmesh.visor != null)
-            {
-                navmesh.visor.color = navmesh.angryColor;
-            }
-            navmesh.ChangeState(EnemyNavmesh.EnemyState.Pursuit);
+            navmesh.agent.SetDestination(navmesh.player.position); // o cara puto vai ate onde tu tava
             navmesh.CallBackup(); // o cara puto chama a galera pra cima de ti
         }
     }

@@ -3211,7 +3211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterControll
   maxHealth: 10
   currentHealth: 0
-  characterType: 2
+  characterType: 1
   capsuleMesh: {fileID: 860421870}
   visorMesh: {fileID: 1229472892}
   minimapMesh: {fileID: 1545522690}
@@ -3226,6 +3226,7 @@ MonoBehaviour:
   shootPool: {fileID: 437011523}
   flashlight: {fileID: 69175423}
   dronePrefab: {fileID: 8510203707461762009, guid: 09fb587630041e14d871a2060eba8fae, type: 3}
+  smokeBombPrefab: {fileID: 5204398019508188323, guid: 51e8dafaa41823746b95e11f2bcb1e6d, type: 3}
 --- !u!1 &868533810
 GameObject:
   m_ObjectHideFlags: 0
@@ -5723,6 +5724,7 @@ MonoBehaviour:
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
   angryColor: {r: 1, g: 0, b: 0, a: 1}
   currentState: 0
+  enemyType: 1
   layerMask:
     serializedVersion: 2
     m_Bits: 8
