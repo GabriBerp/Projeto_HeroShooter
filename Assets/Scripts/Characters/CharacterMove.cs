@@ -11,6 +11,8 @@ public class CharacterMove : MonoBehaviour
     private float staminaMax = 100f;
     private float stamina;
 
+    public bool furtive = false;
+
     void Start()
     {
         stamina = staminaMax;    
@@ -53,6 +55,12 @@ public class CharacterMove : MonoBehaviour
     }
     void HandleRun()
     {
+        if (furtive)
+        {
+            speed = baseSpeed * 1.5f;
+        }
+        else
+        {
             if (Keyboard.current[Key.LeftShift].isPressed && stamina > 0f)
             {
                 speed = baseSpeed * 1.5f;
@@ -76,6 +84,7 @@ public class CharacterMove : MonoBehaviour
                     }
                 }
             }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

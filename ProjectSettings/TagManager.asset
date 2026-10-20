@@ -17,9 +17,9 @@ TagManager:
   - Enemy
   - Bullets
   - Drone
-  - 
-  - 
-  - 
+  - Waypoints
+  - PlayerGun
+  - EnemyGun
   - 
   - 
   - 

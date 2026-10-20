@@ -6,6 +6,7 @@ public class EnemyNavmesh : MonoBehaviour
     public Transform player;
     public NavMeshAgent agent;
     public Transform[] waypoints;
+    public ShootPool shootPool;
 
     public float baseSpeed;
     public float losePlayerDistance = 5f;
@@ -16,6 +17,10 @@ public class EnemyNavmesh : MonoBehaviour
     public Light visor;
     public Color neutralColor = Color.white;
     public Color angryColor = Color.red;
+    static Transform cachedPlayer;
+    static Transform[] cachedWaypoints;
+
+    private GhostCharacter ghostPlayer;
 
     public enum EnemyState
     {
@@ -38,7 +43,80 @@ public class EnemyNavmesh : MonoBehaviour
 
     public void Init()
     {
-        
+        // Estado limpo, já que o objeto está sendo reaproveitado
+        currentState = EnemyState.WayPatrol;
+        isRunningAway = false;
+        inSmoke = false;
+        smokeTimer = 0f;
+        if (visor != null) visor.color = neutralColor;
+
+        // enemyType aleatório
+        enemyType = (EnemyType)Random.Range(0, System.Enum.GetValues(typeof(EnemyType)).Length);
+
+        // layerMask para a layer "Player"
+        int playerLayer = LayerMask.NameToLayer("Player");
+        layerMask = 1 << playerLayer;
+
+        // player: objeto da cena na layer "Player"
+        if (cachedPlayer == null)
+        {
+            foreach (Transform t in FindObjectsByType<Transform>(FindObjectsSortMode.None))
+            {
+                if (t.gameObject.layer == playerLayer && t.GetComponent<CharacterControll>() != null)
+                {
+                    cachedPlayer = t;
+                    break;
+                }
+            }
+        }
+        player = cachedPlayer;
+
+        // agent
+        agent = GetComponent<NavMeshAgent>();
+
+        // waypoints: todos os objetos na layer "Waypoints"
+        if (cachedWaypoints == null || cachedWaypoints.Length == 0)
+        {
+            int waypointLayer = LayerMask.NameToLayer("Waypoints");
+            var list = new System.Collections.Generic.List<Transform>();
+            foreach (Transform t in FindObjectsByType<Transform>(FindObjectsSortMode.None))
+            {
+                if (t.gameObject.layer == waypointLayer)
+                    list.Add(t);
+            }
+            cachedWaypoints = list.ToArray();
+        }
+        waypoints = cachedWaypoints;
+
+        // ghostPlayer (fica null se não existir)
+        ghostPlayer = player != null ? player.GetComponent<GhostCharacter>() : null;
+
+        // shootPool
+        shootPool = GetComponent<ShootPool>();
+        if (enemyType == EnemyType.RangedEnemy)
+        {
+            if (shootPool == null)
+                shootPool = gameObject.AddComponent<ShootPool>();
+
+            shootPool.enabled = true;
+            shootPool.isEnemy = true;
+            shootPool.navmesh = this;
+            shootPool.player = player;
+            shootPool.layerMask = layerMask;
+
+            // weaponType aleatório (SetWeapon já recria o pool e a munição)
+            int weaponCount = System.Enum.GetValues(typeof(ShootPool.WeaponType)).Length;
+            shootPool.SetWeapon((ShootPool.WeaponType)Random.Range(0, weaponCount));
+        }
+        else if (shootPool != null)
+        {
+            // Reaproveitado antes como Ranged: desliga a arma
+            shootPool.enabled = false;
+        }
+    }
+
+    void Awake() {
+        Init();
     }
 
     public void MarkInSmoke()
@@ -82,7 +160,7 @@ public class EnemyNavmesh : MonoBehaviour
 
     void Pursuit()
     {
-        if (inSmoke)
+        if (inSmoke || ghostPlayer.furtiveMode)
         {
             agent.ResetPath();
             if (visor != null) visor.color = neutralColor;
@@ -128,7 +206,7 @@ public class EnemyNavmesh : MonoBehaviour
 
     void SearchPlayer()
     {
-        if (isRunningAway || inSmoke)
+        if (isRunningAway || inSmoke || ghostPlayer.furtiveMode)
         {
             return;
         }
@@ -146,6 +224,11 @@ public class EnemyNavmesh : MonoBehaviour
 
     public void CallBackup()
     {
+        if (ghostPlayer.furtiveMode)
+        {
+            return;
+        }
+
         EnemyNavmesh[] todosInimigos = FindObjectsByType<EnemyNavmesh>();
         foreach (EnemyNavmesh aliado in todosInimigos)
         {
