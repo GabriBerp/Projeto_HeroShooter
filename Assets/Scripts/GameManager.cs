@@ -114,6 +114,7 @@ public class GameManager : MonoBehaviour
     {
         gameStartText.text = "";
         StopCountDown = true;
+        startTime = 5f;
     }
 
     void SetGUIMode(string mode)
