@@ -13,14 +13,6 @@ public class CharacterAbility : MonoBehaviour
     public float Hab1Progress => hab1Timer / hab1Cooldown;
     public float Hab2Progress => hab2Timer / hab2Cooldown;
 
-    protected virtual void Start()
-    {
-        // Começa com as habilidades prontas para uso.
-        // Remova estas linhas se quiser que comecem em cooldown.
-        hab1Timer = hab1Cooldown;
-        hab2Timer = hab2Cooldown;
-    }
-
     protected virtual void Update()
     {
         UpdateCooldowns();

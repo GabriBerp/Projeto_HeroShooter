@@ -36,7 +36,6 @@ public class CharacterControll : MonoBehaviour
     [Header("Ghost")]
     public GameObject smokeBombPrefab;
 
-
     void Awake() {
         characterMove = gameObject.GetComponent<CharacterMove>();
 

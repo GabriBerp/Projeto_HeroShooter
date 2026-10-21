@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,11 +18,28 @@ public class GameManager : MonoBehaviour
     public GameObject playerGUI; // pai de toda a interface do jogador
     public GameObject furtiveGUI; // pai de toda a interface do jogador no modo Furtivo
     public GameObject droneGUI;  // pai de toda a interface do drone
+
     [Header("Drone GUI")]
     public Image droneLifeBar;
     private EnginerCharacter engineer;
     private DroneController drone;
     private bool droneMode;
+
+    [Header("Game Start")]
+    public TextMeshProUGUI gameStartText;
+    public float startTime = 5f;
+    public bool StopCountDown;
+
+    [Header("Stats Panel")]
+    public GameObject tabPanel; 
+    public int playerKills;
+    public TextMeshProUGUI playerKillsText;
+    public int playerDeaths;
+    public TextMeshProUGUI playerDeathsText;
+    public int playerPoints;
+    public TextMeshProUGUI playerPointsText;
+    public string playerName;
+    public TextMeshProUGUI playerNameText;
 
     [Header("FurtiveMode GUI")]
     private GhostCharacter ghost;
@@ -34,11 +52,15 @@ public class GameManager : MonoBehaviour
         engineer = playerAbility as EnginerCharacter; // null se não for o Engenheiro
         ghost = playerAbility as GhostCharacter; // null se não for o Fantasma
 
+        StopCountDown = false;
+
         SetGUIMode("player");
     }
 
     void Update()
     {
+        StartCountdown();
+
         drone = engineer != null ? engineer.ActiveDrone : null;
 
         bool shouldBeDrone = drone != null;
@@ -72,6 +94,26 @@ public class GameManager : MonoBehaviour
         {
             UpdatePlayerGUI();
         }
+    }
+
+    void StartCountdown()
+    {
+        if (startTime > 0 && !StopCountDown)
+        {
+            startTime -= Time.deltaTime;
+            gameStartText.text = "A Partida vai começar em: " + startTime.ToString("0");
+        }
+        if (startTime <= 0 && !StopCountDown)
+        {
+            gameStartText.text = "Partida Começou!";
+            Invoke("ClearCountdown", 1f);
+        }
+    }
+
+    void ClearCountdown()
+    {
+        gameStartText.text = "";
+        StopCountDown = true;
     }
 
     void SetGUIMode(string mode)
