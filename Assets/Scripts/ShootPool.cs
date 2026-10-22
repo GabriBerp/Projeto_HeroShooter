@@ -20,6 +20,7 @@ public class ShootPool : MonoBehaviour
 
     private struct WeaponStats
     {
+        public float damage;
         public int magazineSize;
         public float fireDelay;
         public float reloadTime;
@@ -35,6 +36,7 @@ public class ShootPool : MonoBehaviour
             case WeaponType.Shotgun:
                 return new WeaponStats
                 {
+                    damage = 3.5f,
                     magazineSize = 8,
                     fireDelay = 0.9f,
                     reloadTime = 2.5f,
@@ -45,6 +47,7 @@ public class ShootPool : MonoBehaviour
             case WeaponType.Silent_Revolver:
                 return new WeaponStats
                 {
+                    damage = 8f,
                     magazineSize = 16,
                     fireDelay = 0.4f,
                     reloadTime = 2f,
@@ -56,6 +59,7 @@ public class ShootPool : MonoBehaviour
             default:
                 return new WeaponStats
                 {
+                    damage = 1f,
                     magazineSize = 32,
                     fireDelay = 0.1f,
                     reloadTime = 1.5f,
@@ -249,7 +253,7 @@ public class ShootPool : MonoBehaviour
                 Vector3 direction = rotation * Vector3.forward;
 
                 projectile.transform.SetPositionAndRotation(fp.position, rotation);
-                projectile.GetComponent<Projectile>().StartProjectile(direction, this, tim);
+                projectile.GetComponent<Projectile>().StartProjectile(direction, this, tim, stats.damage);
             }
         }
     }

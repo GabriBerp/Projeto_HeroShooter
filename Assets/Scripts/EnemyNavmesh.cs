@@ -7,6 +7,7 @@ public class EnemyNavmesh : MonoBehaviour
     public NavMeshAgent agent;
     public Transform[] waypoints;
     public ShootPool shootPool;
+    public MeleeAttack meleeAttack;
 
     public float baseSpeed;
     public float losePlayerDistance = 5f;
@@ -91,27 +92,41 @@ public class EnemyNavmesh : MonoBehaviour
         // ghostPlayer (fica null se não existir)
         ghostPlayer = player != null ? player.GetComponent<GhostCharacter>() : null;
 
-        // shootPool
+        // shootPool + meleeAttack
         shootPool = GetComponent<ShootPool>();
-        if (enemyType == EnemyType.RangedEnemy)
-        {
-            if (shootPool == null)
-                shootPool = gameObject.AddComponent<ShootPool>();
+        meleeAttack = GetComponent<MeleeAttack>();
 
-            shootPool.enabled = true;
-            shootPool.isEnemy = true;
-            shootPool.navmesh = this;
-            shootPool.player = player;
-            shootPool.layerMask = layerMask;
-
-            // weaponType aleatório (SetWeapon já recria o pool e a munição)
-            int weaponCount = System.Enum.GetValues(typeof(ShootPool.WeaponType)).Length;
-            shootPool.SetWeapon((ShootPool.WeaponType)Random.Range(0, weaponCount));
-        }
-        else if (shootPool != null)
+        switch (enemyType)
         {
-            // Reaproveitado antes como Ranged: desliga a arma
-            shootPool.enabled = false;
+            case EnemyType.RangedEnemy:
+                if (shootPool == null)
+                    shootPool = gameObject.AddComponent<ShootPool>();
+
+                shootPool.enabled = true;
+                shootPool.isEnemy = true;
+                shootPool.navmesh = this;
+                shootPool.player = player;
+                shootPool.layerMask = layerMask;
+
+                // weaponType aleatório (SetWeapon já recria o pool e a munição)
+                int weaponCount = System.Enum.GetValues(typeof(ShootPool.WeaponType)).Length;
+                shootPool.SetWeapon((ShootPool.WeaponType)Random.Range(0, weaponCount));
+                meleeAttack.enabled = false;
+                break;
+            case EnemyType.CloseCombatEnemy:
+                if (meleeAttack == null)
+                    meleeAttack = gameObject.AddComponent<MeleeAttack>();
+                meleeAttack.enabled = true;
+                meleeAttack.isEnemy = true;
+                meleeAttack.navmesh = this;
+                meleeAttack.player = player;
+                meleeAttack.targetMask = layerMask;
+
+                // meleeType aleatório
+                int meleeCount = System.Enum.GetValues(typeof(MeleeAttack.MeleeType)).Length;
+                meleeAttack.SetWeapon((MeleeAttack.MeleeType)Random.Range(0, meleeCount));
+                shootPool.enabled = false;
+                break;
         }
     }
 

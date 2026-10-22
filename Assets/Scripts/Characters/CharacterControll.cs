@@ -1,14 +1,8 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CharacterControll : MonoBehaviour
 {
-    /*
-    === CONTROLE DO JOGADOR ===
-    - Controla Vida
-    - Controla Variante de Personagem
-    ===                     ===
-    */
-
     public enum CharacterType
     {
         HunterCharacter,
@@ -29,6 +23,7 @@ public class CharacterControll : MonoBehaviour
     private CharacterAbility characterAbility;
     private CharacterMove characterMove;
     public ShootPool shootPool;
+    public MeleeAttack meleeAttack;
     [Header("Light Parameter")]
     public Light flashlight;
     [Header("Engineer")]
@@ -59,6 +54,7 @@ public class CharacterControll : MonoBehaviour
                     characterMove.baseSpeed = 4f;
                     maxHealth = 20f;
                     shootPool.SetWeapon(ShootPool.WeaponType.Shotgun);
+                    meleeAttack.SetWeapon(MeleeAttack.MeleeType.Axe);
                     break;
                 case 2: 
                     characterType = CharacterType.GhostCharacter;
@@ -72,6 +68,7 @@ public class CharacterControll : MonoBehaviour
                     characterMove.baseSpeed = 5f;
                     maxHealth = 14f;
                     shootPool.SetWeapon(ShootPool.WeaponType.Silent_Revolver);
+                    meleeAttack.SetWeapon(MeleeAttack.MeleeType.Knife);
                     break;
                 case 3: 
                     characterType = CharacterType.EnginerCharacter;
@@ -85,6 +82,7 @@ public class CharacterControll : MonoBehaviour
                     characterMove.baseSpeed = 4.5f;
                     maxHealth = 16f;
                     shootPool.SetWeapon(ShootPool.WeaponType.Nailgun);
+                    meleeAttack.SetWeapon(MeleeAttack.MeleeType.Bat);
                     break;
             }
         }else{
@@ -102,6 +100,7 @@ public class CharacterControll : MonoBehaviour
                     characterMove.baseSpeed = 4f;
                     maxHealth = 20f;
                     shootPool.SetWeapon(ShootPool.WeaponType.Shotgun);
+                    meleeAttack.SetWeapon(MeleeAttack.MeleeType.Axe);
                     break;
                 case CharacterType.GhostCharacter: 
                     // characterType = CharacterType.GhostCharacter;
@@ -115,6 +114,7 @@ public class CharacterControll : MonoBehaviour
                     characterMove.baseSpeed = 5f;
                     maxHealth = 14f;
                     shootPool.SetWeapon(ShootPool.WeaponType.Silent_Revolver);
+                    meleeAttack.SetWeapon(MeleeAttack.MeleeType.Knife);
                     break;
                 case CharacterType.EnginerCharacter: 
                     // characterType = CharacterType.EnginerCharacter;
@@ -128,17 +128,52 @@ public class CharacterControll : MonoBehaviour
                     characterMove.baseSpeed = 4.5f;
                     maxHealth = 16f;
                     shootPool.SetWeapon(ShootPool.WeaponType.Nailgun);
+                    meleeAttack.SetWeapon(MeleeAttack.MeleeType.Bat);
                     break;
             }
         }
     }
 
-    void Start() {
+    void Start() 
+    {
         currentHealth = maxHealth;
+        SwitchWeapons(false);
     } 
+
+    void Update() 
+    {
+        if (Keyboard.current == null) return;
+
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        {
+            // 1 - Troca pra arma principal (shootPool)
+            SwitchWeapons(false);
+        }
+        else if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        {
+            // 2 - Troca pra arma secundária (meleeAttack)
+            SwitchWeapons(true);
+        }
+    }
+
+    void SwitchWeapons(bool state)
+    {
+        shootPool.enabled = !state;
+        meleeAttack.enabled = state;
+    }
 
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
+        if (currentHealth <= 0f)
+        {
+            Die();
+            return;
+        }
+    }
+
+    void Die()
+    {
+        gameObject.SetActive(false);
     }
 }
