@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class CharacterControll : MonoBehaviour
 {
+    public PlayerSpawnControl spawn;
     public enum CharacterType
     {
         HunterCharacter,
@@ -176,6 +177,6 @@ public class CharacterControll : MonoBehaviour
 
     void Die()
     {
-        gameObject.SetActive(false);
+        spawn.ReturnToPool(this);
     }
 }

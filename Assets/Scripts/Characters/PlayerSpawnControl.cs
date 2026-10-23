@@ -1,16 +1,30 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerSpawnControl : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public Transform[] spawns;
+    public CharacterControll player;
+    [SerializeField] private float respawnDelay = 5f;
+
+    private void Spawn()
     {
-        
+        Transform spawn = spawns[Random.Range(0, spawns.Length)];
+        player.transform.SetPositionAndRotation(spawn.position, spawn.rotation);
+        player.currentHealth = player.maxHealth;
+        player.gameObject.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
+    // Chamado pelo player quando ele "morre"
+    public void ReturnToPool(CharacterControll player)
     {
-        
+        player.gameObject.SetActive(false);
+        StartCoroutine(RespawnRoutine());
+    }
+
+    private IEnumerator RespawnRoutine()
+    {
+        yield return new WaitForSeconds(respawnDelay);
+        Spawn();
     }
 }
