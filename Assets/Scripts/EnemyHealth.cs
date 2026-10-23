@@ -4,6 +4,7 @@ public class EnemyHealth : MonoBehaviour
 {
     public float maxHealth;
     public float currentHealth;
+    public EnemySpawner father;
 
     void Start() {
         currentHealth = maxHealth;
@@ -38,6 +39,7 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
-        gameObject.SetActive(false);
+        EnemyNavmesh navmesh = GetComponent<EnemyNavmesh>();
+        father.ReturnToPool(navmesh);
     }
 }

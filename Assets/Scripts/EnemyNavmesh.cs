@@ -4,6 +4,7 @@ using UnityEngine.AI;
 public class EnemyNavmesh : MonoBehaviour
 {
     public Transform player;
+    public EnemySpawner spawn;
     public NavMeshAgent agent;
     public Transform[] waypoints;
     public ShootPool shootPool;
@@ -47,9 +48,12 @@ public class EnemyNavmesh : MonoBehaviour
     {
         // Estado limpo, já que o objeto está sendo reaproveitado
         currentState = EnemyState.WayPatrol;
+        enemyHealth.currentHealth = enemyHealth.maxHealth;
         isRunningAway = false;
         inSmoke = false;
         smokeTimer = 0f;
+        enemyHealth.father = spawn;
+
         if (visor != null) visor.color = neutralColor;
 
         // enemyType aleatório
@@ -131,7 +135,7 @@ public class EnemyNavmesh : MonoBehaviour
         }
     }
 
-    void Awake() {
+    private void Start() {
         Init();
     }
 
@@ -176,7 +180,8 @@ public class EnemyNavmesh : MonoBehaviour
 
     void Pursuit()
     {
-        if (inSmoke || ghostPlayer.furtiveMode)
+        bool ghost = ghostPlayer != null ? ghostPlayer.furtiveMode : false;
+        if (inSmoke || ghost)
         {
             agent.ResetPath();
             if (visor != null) visor.color = neutralColor;
@@ -241,7 +246,8 @@ public class EnemyNavmesh : MonoBehaviour
 
     public void CallBackup()
     {
-        if (ghostPlayer.furtiveMode)
+        bool ghost = ghostPlayer != null ? ghostPlayer.furtiveMode : false;
+        if (ghost)
         {
             return;
         }

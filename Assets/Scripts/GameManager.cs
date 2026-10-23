@@ -17,13 +17,15 @@ public class GameManager : MonoBehaviour
     [Header("GUI Roots")]
     public GameObject playerGUI; // pai de toda a interface do jogador
     public GameObject furtiveGUI; // pai de toda a interface do jogador no modo Furtivo
+    public GameObject rageGUI; // pai de toda a interface do jogador no modo Furia
     public GameObject droneGUI;  // pai de toda a interface do drone
+    private enum GUIMode { Player, Drone, Furtive, Rage }
+    private GUIMode currentMode;
 
     [Header("Drone GUI")]
     public Image droneLifeBar;
     private EnginerCharacter engineer;
     private DroneController drone;
-    private bool droneMode;
 
     [Header("Game Start")]
     public TextMeshProUGUI gameStartText;
@@ -42,14 +44,31 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI playerNameText;
 
     [Header("FurtiveMode GUI")]
-    private GhostCharacter ghost;
     public Image furtiveTimeBar;
-    private bool furtiveMode;
+    private GhostCharacter ghost;
 
     [Header("RageMode GUI")]
-    private HunterCharacter hunter;
     public Image rageTimeBar;
-    private bool rageMode;
+    private HunterCharacter hunter;
+    public TextMeshProUGUI rageHealthText;
+    public TextMeshProUGUI rageAmmoText;
+    public Image rageHab1Image;
+
+    [Header("Control Zones GUI")]
+    // Variaveis de Porcentagem de Zona, indica quantos % da zona um time conquistou.
+    // Se um time estiver conquistando uma zona, e a % restante for igual ou menor que a % do outro time, a % do outro time começa a cair caso ninguem do outro time esteja na zona.
+    public Image zoneAplayer; 
+    public float zAPlayerPorc = 0f;
+    public Image zoneBplayer;
+    public float zBPlayerPorc = 0f;
+    public Image zoneCplayer;
+    public float zCPlayerPorc = 0f;
+    public Image zoneAenemy;
+    public float zAEnemyPorc = 0f;
+    public Image zoneBenemy;
+    public float zBEnemyPorc = 0f;
+    public Image zoneCenemy;
+    public float zCEnemyPorc = 0f;
 
     void Start()
     {
@@ -60,7 +79,7 @@ public class GameManager : MonoBehaviour
 
         StopCountDown = false;
 
-        SetGUIMode("player");
+        SetGUIMode(GUIMode.Player);
     }
 
     void Update()
@@ -69,37 +88,41 @@ public class GameManager : MonoBehaviour
 
         drone = engineer != null ? engineer.ActiveDrone : null;
 
-        bool shouldBeDrone = drone != null;
-        bool shouldBeFurtive = ghost != null ? ghost.furtiveMode : false;
-        if (shouldBeDrone && !droneMode)
-        {
-            SetGUIMode("drone");
-        }else if (!shouldBeDrone && droneMode)
-        {
-            SetGUIMode("player");
-        }
+        GUIMode desired = GetDesiredMode();
+        if (desired != currentMode)
+            SetGUIMode(desired);
 
-        if (shouldBeFurtive)
-        {
-            SetGUIMode("furtive");
-        }
-        else
-        {
-            SetGUIMode("player");
-        }
+        UpdateCurrentGUI();
+        ControlZoneGUI();
+    }
 
-        if (droneMode)
+    GUIMode GetDesiredMode()
+    {
+        if (drone != null) return GUIMode.Drone;
+        if (ghost != null && ghost.furtiveMode) return GUIMode.Furtive;
+        if (hunter != null && hunter.rageMode) return GUIMode.Rage;
+        return GUIMode.Player;
+    }
+
+    void UpdateCurrentGUI()
+    {
+        switch (currentMode)
         {
-            UpdateDroneGUI();
+            case GUIMode.Drone: UpdateDroneGUI(); break;
+            case GUIMode.Furtive: UpdateFurtiveGUI(); break;
+            case GUIMode.Rage: UpdateInRageGUI(); break;
+            default: UpdatePlayerGUI(); break;
         }
-        else if (furtiveMode)
-        {
-            UpdateFurtiveGUI();
-        }
-        else
-        {
-            UpdatePlayerGUI();
-        }
+    }
+
+    void SetGUIMode(GUIMode mode)
+    {
+        currentMode = mode;
+
+        playerGUI.SetActive(mode == GUIMode.Player);
+        droneGUI.SetActive(mode == GUIMode.Drone);
+        furtiveGUI.SetActive(mode == GUIMode.Furtive);
+        rageGUI.SetActive(mode == GUIMode.Rage);
     }
 
     void StartCountdown()
@@ -122,32 +145,6 @@ public class GameManager : MonoBehaviour
         StopCountDown = true;
         startTime = 5f;
     }
-
-    void SetGUIMode(string mode)
-    {
-        switch (mode)
-        {
-            case "drone":
-                droneMode = true;
-                playerGUI.SetActive(false);
-                droneGUI.SetActive(true);
-                break;
-            case "player":
-                droneMode = false;
-                furtiveMode = false;
-                droneGUI.SetActive(false);
-                furtiveGUI.SetActive(false);
-                playerGUI.SetActive(true);
-                break;
-            case "furtive":
-                furtiveMode = true;
-                furtiveGUI.SetActive(true);
-                playerGUI.SetActive(false);
-                break;
-
-        }
-    }
-
     void UpdatePlayerGUI()
     {
         healthText.text = player.currentHealth.ToString("#");
@@ -171,5 +168,31 @@ public class GameManager : MonoBehaviour
     void UpdateFurtiveGUI()
     {
         furtiveTimeBar.fillAmount = Mathf.Clamp01(ghost.FurtivePercent);
+    }
+
+    void UpdateInRageGUI()
+    {
+        rageHealthText.text = player.currentHealth.ToString("#");
+        if (!ammo.IsReloading())
+        {
+            rageAmmoText.text = ammo.currentAmmo + " / " + ammo.GetMagazineSize();
+        }
+        else
+        {
+            rageAmmoText.text = "Recarregando. . .";
+        }
+        rageHab1Image.fillAmount = playerAbility.Hab1Progress;
+        rageTimeBar.fillAmount = Mathf.Clamp01(hunter.RagePercent);
+    }
+
+    void ControlZoneGUI()
+    {
+        zoneAplayer.fillAmount = Mathf.Clamp01(zAPlayerPorc / 100f);
+        zoneBplayer.fillAmount = Mathf.Clamp01(zBPlayerPorc / 100f);
+        zoneCplayer.fillAmount = Mathf.Clamp01(zCPlayerPorc / 100f);
+
+        zoneAenemy.fillAmount = Mathf.Clamp01(zAEnemyPorc / 100f);
+        zoneBenemy.fillAmount = Mathf.Clamp01(zBEnemyPorc / 100f);
+        zoneCenemy.fillAmount = Mathf.Clamp01(zCEnemyPorc / 100f);
     }
 }

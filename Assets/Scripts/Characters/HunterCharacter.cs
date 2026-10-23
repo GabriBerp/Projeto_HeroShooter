@@ -14,8 +14,6 @@ public class HunterCharacter : CharacterAbility
     private float rageTime = 0f;
     public bool rageMode = false;
     public float RagePercent => rageTime / maxRageTime; // pra usar numa barra de UI
-    private SonarFx sonar;
-    public Color sonarColor = Color.red;
 
     private void Cache()
     {
@@ -25,8 +23,6 @@ public class HunterCharacter : CharacterAbility
         meleeAttack = controll.meleeAttack;
         move = GetComponent<CharacterMove>();
         orbit = Camera.main.GetComponent<MouseOrbit>();
-        sonar = Camera.main.GetComponent<SonarFx>();
-        sonar.baseColor = sonarColor;
     }
 
     protected override void Update()
@@ -47,8 +43,6 @@ public class HunterCharacter : CharacterAbility
 
         if (rageMode)
         {
-            sonar.origin = transform.position;
-            sonar.baseColor = sonarColor;
             hab2Timer = 0f;
             return;
         }
@@ -72,7 +66,7 @@ public class HunterCharacter : CharacterAbility
     {
         /*===
             CONCEITO: "Get over here!".
-            O Jogador dispara um gancho na direção que esta olhando, e caso acerte um inimigo, puxa ele até o jogador, e o deixa Stunnado por 2s. 
+            O Jogador da um dash na direção do inimigo.
             ===*/
     }
 
@@ -87,7 +81,6 @@ public class HunterCharacter : CharacterAbility
         move.inRage = true;
         rageTime = maxRageTime;
         controll.isResistent = true;
-        sonar.Show();
     }
 
     void EndRageMode()
@@ -95,7 +88,6 @@ public class HunterCharacter : CharacterAbility
         rageMode = false;
         move.inRage = false;
         controll.isResistent = false;
-        sonar.Hide();
         hab2Timer = 0f;
     }
 }
