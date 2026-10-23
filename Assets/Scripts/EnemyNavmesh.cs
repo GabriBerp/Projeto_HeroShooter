@@ -8,6 +8,7 @@ public class EnemyNavmesh : MonoBehaviour
     public Transform[] waypoints;
     public ShootPool shootPool;
     public MeleeAttack meleeAttack;
+    public EnemyHealth enemyHealth;
 
     public float baseSpeed;
     public float losePlayerDistance = 5f;
@@ -221,7 +222,8 @@ public class EnemyNavmesh : MonoBehaviour
 
     void SearchPlayer()
     {
-        if (isRunningAway || inSmoke || ghostPlayer.furtiveMode)
+        bool ghost = ghostPlayer != null ? ghostPlayer.furtiveMode : false;
+        if (isRunningAway || inSmoke || ghost)
         {
             return;
         }

@@ -46,11 +46,17 @@ public class GameManager : MonoBehaviour
     public Image furtiveTimeBar;
     private bool furtiveMode;
 
+    [Header("RageMode GUI")]
+    private HunterCharacter hunter;
+    public Image rageTimeBar;
+    private bool rageMode;
+
     void Start()
     {
         playerAbility = player.gameObject.GetComponent<CharacterAbility>();
         engineer = playerAbility as EnginerCharacter; // null se não for o Engenheiro
         ghost = playerAbility as GhostCharacter; // null se não for o Fantasma
+        hunter = playerAbility as HunterCharacter; // null se não for o Caçador
 
         StopCountDown = false;
 

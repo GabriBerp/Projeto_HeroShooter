@@ -12,6 +12,7 @@ public class CharacterMove : MonoBehaviour
     private float stamina;
 
     public bool furtive = false;
+    public bool inRage = false;
 
     void Start()
     {
@@ -58,6 +59,9 @@ public class CharacterMove : MonoBehaviour
         if (furtive)
         {
             speed = baseSpeed * 1.5f;
+        }else if (inRage)
+        {
+            speed = baseSpeed * 2f;
         }
         else
         {

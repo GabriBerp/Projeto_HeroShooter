@@ -38,7 +38,14 @@ public class Projectile : MonoBehaviour
             CharacterControll playerHealth = collision.gameObject.GetComponent<CharacterControll>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(damage);
+                if (playerHealth.isResistent)
+                {
+                    playerHealth.TakeDamage(damage/2);
+                }
+                else
+                {
+                    playerHealth.TakeDamage(damage);
+                }
             }
         }
         Shootpool.ReturnProjectile(gameObject);  

@@ -31,6 +31,8 @@ public class CharacterControll : MonoBehaviour
     [Header("Ghost")]
     public GameObject smokeBombPrefab;
 
+    public bool isResistent = false;
+
     void Awake() {
         characterMove = gameObject.GetComponent<CharacterMove>();
 
@@ -59,8 +61,8 @@ public class CharacterControll : MonoBehaviour
                 case 2: 
                     characterType = CharacterType.GhostCharacter;
                     characterAbility = gameObject.AddComponent<GhostCharacter>();
-                    characterAbility.hab1Cooldown = 25f;
-                    characterAbility.hab2Cooldown = 50f;
+                    characterAbility.hab1Cooldown = 30f;
+                    characterAbility.hab2Cooldown = 40f;
 
                     capsuleMesh.material = characterMaterial[1];
                     visorMesh.material = visorMaterial[1];
@@ -73,8 +75,8 @@ public class CharacterControll : MonoBehaviour
                 case 3: 
                     characterType = CharacterType.EnginerCharacter;
                     characterAbility = gameObject.AddComponent<EnginerCharacter>();
-                    characterAbility.hab1Cooldown = 25f;
-                    characterAbility.hab2Cooldown = 50f;
+                    characterAbility.hab1Cooldown = 20f;
+                    characterAbility.hab2Cooldown = 60f;
                     
                     capsuleMesh.material = characterMaterial[2];
                     visorMesh.material = visorMaterial[2];
@@ -105,8 +107,8 @@ public class CharacterControll : MonoBehaviour
                 case CharacterType.GhostCharacter: 
                     // characterType = CharacterType.GhostCharacter;
                     characterAbility = gameObject.AddComponent<GhostCharacter>();
-                    characterAbility.hab1Cooldown = 25f;
-                    characterAbility.hab2Cooldown = 50f;
+                    characterAbility.hab1Cooldown = 30f;
+                    characterAbility.hab2Cooldown = 40f;
 
                     capsuleMesh.material = characterMaterial[1];
                     visorMesh.material = visorMaterial[1];
@@ -119,8 +121,8 @@ public class CharacterControll : MonoBehaviour
                 case CharacterType.EnginerCharacter: 
                     // characterType = CharacterType.EnginerCharacter;
                     characterAbility = gameObject.AddComponent<EnginerCharacter>();
-                    characterAbility.hab1Cooldown = 25f;
-                    characterAbility.hab2Cooldown = 50f;
+                    characterAbility.hab1Cooldown = 15f;
+                    characterAbility.hab2Cooldown = 60f;
                     
                     capsuleMesh.material = characterMaterial[2];
                     visorMesh.material = visorMaterial[2];

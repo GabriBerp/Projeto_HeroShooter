@@ -5,6 +5,7 @@ public class GhostCharacter : CharacterAbility
     private CharacterControll controll;
     public ShootPool shootPool;
     private SonarFx sonar;
+    public Color sonarColor = Color.white;
     private CharacterMove move;
     private MouseOrbit orbit;
     // public Transform throwOrigin;
@@ -27,6 +28,7 @@ public class GhostCharacter : CharacterAbility
         move = GetComponent<CharacterMove>();
         orbit = Camera.main.GetComponent<MouseOrbit>();
         sonar = Camera.main.GetComponent<SonarFx>();
+        sonar.baseColor = sonarColor;
     }
 
     protected override void Update()
@@ -48,6 +50,7 @@ public class GhostCharacter : CharacterAbility
         if (furtiveMode)
         {
             sonar.origin = transform.position;
+            sonar.baseColor = sonarColor;
             hab2Timer = 0f;
             return;
         }

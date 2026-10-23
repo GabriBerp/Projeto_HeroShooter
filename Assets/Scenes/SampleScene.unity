@@ -23073,7 +23073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterControll
   maxHealth: 10
   currentHealth: 0
-  characterType: 1
+  characterType: 0
   capsuleMesh: {fileID: 860421870}
   visorMesh: {fileID: 1229472892}
   minimapMesh: {fileID: 1545522690}
@@ -59887,6 +59887,7 @@ MonoBehaviour:
   - {fileID: 1292782283}
   shootPool: {fileID: 0}
   meleeAttack: {fileID: 0}
+  enemyHealth: {fileID: 0}
   baseSpeed: 3.5
   losePlayerDistance: 25
   detectPlayerDistance: 20
