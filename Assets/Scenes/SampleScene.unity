@@ -23955,6 +23955,7 @@ GameObject:
   - component: {fileID: 860421873}
   - component: {fileID: 860421874}
   - component: {fileID: 860421875}
+  - component: {fileID: 860421876}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -24138,6 +24139,24 @@ MonoBehaviour:
   dronePrefab: {fileID: 8510203707461762009, guid: 09fb587630041e14d871a2060eba8fae, type: 3}
   smokeBombPrefab: {fileID: 5204398019508188323, guid: 51e8dafaa41823746b95e11f2bcb1e6d, type: 3}
   isResistent: 0
+--- !u!114 &860421876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860421868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbef9b7296ada284d84af5ad6147d63b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
+  team: 0
+  kills: 0
+  deaths: 0
+  points: 0
+  characterName: BobMarley
+  gameManager: {fileID: 1165470498}
 --- !u!1 &863466813
 GameObject:
   m_ObjectHideFlags: 0
@@ -32598,20 +32617,19 @@ MonoBehaviour:
   gameStartText: {fileID: 573547851}
   startTime: 5
   StopCountDown: 0
-  tabPanel: {fileID: 240309671}
-  playerKills: 0
-  playerKillsText: {fileID: 1895101712}
-  playerDeaths: 0
-  playerDeathsText: {fileID: 1470339667}
-  playerPoints: 0
-  playerPointsText: {fileID: 863466815}
-  playerName: 
-  playerNameText: {fileID: 13992070}
   furtiveTimeBar: {fileID: 17426750}
   rageTimeBar: {fileID: 1733186061}
   rageHealthText: {fileID: 646905230}
   rageAmmoText: {fileID: 1836127565}
   rageHab1Image: {fileID: 1247499632}
+  tabPanel: {fileID: 240309671}
+  FragScore: 0
+  DeathScore: 0
+  PointScore: 0
+  fragText: {fileID: 1895101712}
+  deathText: {fileID: 1470339667}
+  pointText: {fileID: 863466815}
+  playerNameText: {fileID: 13992070}
   zoneAplayer: {fileID: 1740913264}
   zAPlayerPorc: 0
   zoneBplayer: {fileID: 1761736482}

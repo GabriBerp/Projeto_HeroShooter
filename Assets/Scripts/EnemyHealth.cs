@@ -6,6 +6,9 @@ public class EnemyHealth : MonoBehaviour
     public float currentHealth;
     public EnemySpawner father;
 
+    public CharacterStats PlayerStats;
+    public CharacterStats myStats;
+
     void Start() {
         currentHealth = maxHealth;
     } 
@@ -40,6 +43,10 @@ public class EnemyHealth : MonoBehaviour
     void Die()
     {
         EnemyNavmesh navmesh = GetComponent<EnemyNavmesh>();
+        PlayerStats = navmesh.player.GetComponent<CharacterStats>();
+
+        PlayerStats.AddKill();
+        myStats.AddDeath();
         father.ReturnToPool(navmesh);
     }
 }

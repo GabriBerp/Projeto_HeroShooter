@@ -32,17 +32,6 @@ public class GameManager : MonoBehaviour
     public float startTime = 5f;
     public bool StopCountDown;
 
-    [Header("Stats Panel")]
-    public GameObject tabPanel; 
-    public int playerKills;
-    public TextMeshProUGUI playerKillsText;
-    public int playerDeaths;
-    public TextMeshProUGUI playerDeathsText;
-    public int playerPoints;
-    public TextMeshProUGUI playerPointsText;
-    public string playerName;
-    public TextMeshProUGUI playerNameText;
-
     [Header("FurtiveMode GUI")]
     public Image furtiveTimeBar;
     private GhostCharacter ghost;
@@ -53,6 +42,16 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI rageHealthText;
     public TextMeshProUGUI rageAmmoText;
     public Image rageHab1Image;
+
+    [Header("FragPanel GUI")]
+    public GameObject tabPanel;
+    public int FragScore = 0;
+    public int DeathScore = 0;
+    public int PointScore = 0;
+    public TextMeshProUGUI fragText;
+    public TextMeshProUGUI deathText;
+    public TextMeshProUGUI pointText;
+    public TextMeshProUGUI playerNameText;
 
     [Header("Control Zones GUI")]
     // Variaveis de Porcentagem de Zona, indica quantos % da zona um time conquistou.
@@ -94,6 +93,7 @@ public class GameManager : MonoBehaviour
 
         UpdateCurrentGUI();
         ControlZoneGUI();
+        ScorePanel();
     }
 
     GUIMode GetDesiredMode()
@@ -194,5 +194,36 @@ public class GameManager : MonoBehaviour
         zoneAenemy.fillAmount = Mathf.Clamp01(zAEnemyPorc / 100f);
         zoneBenemy.fillAmount = Mathf.Clamp01(zBEnemyPorc / 100f);
         zoneCenemy.fillAmount = Mathf.Clamp01(zCEnemyPorc / 100f);
+    }
+
+    // Sessão de Funções pro Painel de Status
+
+    public void ScorePanel()
+    {
+        if (Keyboard.current[Key.Tab].wasPressedThisFrame)
+        {
+            tabPanel.SetActive(!tabPanel.activeSelf);
+        }
+    }
+
+    public void PlayerList(string name)
+    {
+        playerNameText.text = name;
+    }
+
+    public void UpdateFragScore(int val)
+    {
+        FragScore+=val;
+        fragText.text = FragScore.ToString();
+    }
+    public void UpdateDeathScore(int val)
+    {
+        DeathScore+=val;
+        deathText.text = DeathScore.ToString();
+    }
+    public void UpdatePointScore(int val)
+    {
+        PointScore+=val;
+        pointText.text = PointScore.ToString();
     }
 }
