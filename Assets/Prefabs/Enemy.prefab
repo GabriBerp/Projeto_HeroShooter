@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 3482248112313475916}
   - component: {fileID: 9179132096177110916}
   - component: {fileID: 579872638146805529}
-  - component: {fileID: 91517568417492605}
+  - component: {fileID: 8318582588581898618}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
@@ -422,7 +422,8 @@ MonoBehaviour:
   currentHealth: 0
   father: {fileID: 0}
   PlayerStats: {fileID: 0}
-  myStats: {fileID: 91517568417492605}
+  myStats: {fileID: 8318582588581898618}
+  navmesh: {fileID: 0}
 --- !u!114 &579872638146805529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,7 +446,7 @@ MonoBehaviour:
   navmesh: {fileID: 0}
   player: {fileID: 0}
   enemyAttackDelayMultiplier: 1.5
---- !u!114 &91517568417492605
+--- !u!114 &8318582588581898618
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -454,7 +455,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2980490546498732318}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbef9b7296ada284d84af5ad6147d63b, type: 3}
+  m_Script: {fileID: 11500000, guid: 7fb4fba756a6d3149b46498e98f160a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
   team: 2

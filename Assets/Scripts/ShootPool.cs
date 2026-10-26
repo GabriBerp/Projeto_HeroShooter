@@ -145,6 +145,8 @@ public class ShootPool : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.GameStarted) return;
+        
         if (!isEnemy)
         {
             bool triggerPressed = stats.automatic
@@ -300,5 +302,12 @@ public class ShootPool : MonoBehaviour
     public bool IsReloading()
     {
         return reloading;
+    }
+
+    public void Init()
+    {
+        currentAmmo = stats.magazineSize;
+        reloading = false;
+        reloadRoutine = null;
     }
 }

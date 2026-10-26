@@ -22,6 +22,8 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.GameStarted) return;
+        
         transform.rotation = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0);
         direction = Vector3.zero;
 

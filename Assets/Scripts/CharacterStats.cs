@@ -32,18 +32,18 @@ public class CharacterStats : MonoBehaviour
     public void AddKill()
     {
         kills++;
-        if (team == TeamType.Player) gameManager.UpdateFragScore(1);
+        if (team == TeamType.Player) gameManager.RefreshScoreUI(this);
     }
 
     public void AddDeath()
     {
         deaths++;
-        if (team == TeamType.Player) gameManager.UpdateDeathScore(1);
+        if (team == TeamType.Player) gameManager.RefreshScoreUI(this);
     }
 
     public void AddPoint()
     {
         points++;
-        if (team == TeamType.Player) gameManager.UpdatePointScore(1);
+        if (team == TeamType.Player) gameManager.RefreshScoreUI(this);
     }
 }

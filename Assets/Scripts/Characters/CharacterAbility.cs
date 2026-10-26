@@ -15,6 +15,8 @@ public class CharacterAbility : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (!GameManager.GameStarted) return;
+        
         UpdateCooldowns();
         HandleAbility();
     }

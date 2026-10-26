@@ -8,25 +8,39 @@ public class EnemyHealth : MonoBehaviour
 
     public CharacterStats PlayerStats;
     public CharacterStats myStats;
+    public EnemyNavmesh navmesh;
 
+    public bool isDead { get; private set; }
     void Start() {
-        currentHealth = maxHealth;
+        Init();
+
+        navmesh = GetComponent<EnemyNavmesh>();
+        PlayerStats = navmesh.player.GetComponent<CharacterStats>();
     } 
+
+    public void Init()
+    {
+        currentHealth = maxHealth;
+        isDead = false;
+
+    }
     
     public void TakeDamage(float amount)
     {
+        if (isDead) return;
+
         // Parte normal do projeto que foi o que o professor passou
         currentHealth -= amount;
         if (currentHealth <= 0f)
         {
             Die();
+            isDead = true;
             return;
         }
 
         // Parte extra do projeto que eu fiz porque não tenho amor a mim mesmo e aparentemente gosto de sofrer
         float porc = currentHealth > 0f ? maxHealth / currentHealth : 0f;
         float rand = Random.value;
-        EnemyNavmesh navmesh = GetComponent<EnemyNavmesh>();
         if (rand >= porc) // na logica: quanto menor a vida, mais chances
         {
             navmesh.RunAway();
@@ -42,9 +56,6 @@ public class EnemyHealth : MonoBehaviour
 
     void Die()
     {
-        EnemyNavmesh navmesh = GetComponent<EnemyNavmesh>();
-        PlayerStats = navmesh.player.GetComponent<CharacterStats>();
-
         PlayerStats.AddKill();
         myStats.AddDeath();
         father.ReturnToPool(navmesh);

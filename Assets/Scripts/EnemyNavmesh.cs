@@ -48,7 +48,7 @@ public class EnemyNavmesh : MonoBehaviour
     {
         // Estado limpo, já que o objeto está sendo reaproveitado
         currentState = EnemyState.WayPatrol;
-        enemyHealth.currentHealth = enemyHealth.maxHealth;
+        enemyHealth.Init();
         isRunningAway = false;
         inSmoke = false;
         smokeTimer = 0f;
@@ -154,6 +154,8 @@ public class EnemyNavmesh : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.GameStarted) return;
+        
         UpdateSmoke();
         FiniteStateMachine();
     }

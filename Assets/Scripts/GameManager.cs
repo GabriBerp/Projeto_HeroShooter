@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI gameStartText;
     public float startTime = 5f;
     public bool StopCountDown;
+    public static bool GameStarted { get; private set; }
 
     [Header("FurtiveMode GUI")]
     public Image furtiveTimeBar;
@@ -68,23 +70,49 @@ public class GameManager : MonoBehaviour
     public float zBEnemyPorc = 0f;
     public Image zoneCenemy;
     public float zCEnemyPorc = 0f;
+    private bool countdownFinishing;
+
+    void Awake()
+    {
+        GameStarted = false;
+        Time.timeScale = 0f;
+    }
 
     void Start()
     {
         playerAbility = player.gameObject.GetComponent<CharacterAbility>();
-        engineer = playerAbility as EnginerCharacter; // null se não for o Engenheiro
-        ghost = playerAbility as GhostCharacter; // null se não for o Fantasma
-        hunter = playerAbility as HunterCharacter; // null se não for o Caçador
+        engineer = playerAbility as EnginerCharacter;
+        ghost = playerAbility as GhostCharacter;
+        hunter = playerAbility as HunterCharacter;
 
         StopCountDown = false;
-
         SetGUIMode(GUIMode.Player);
+
+        StartCoroutine(CountdownRoutine());
+    }
+
+    IEnumerator CountdownRoutine()
+    {
+        float t = startTime;
+
+        while (t > 0f)
+        {
+            gameStartText.text = "A Partida vai começar em: " + Mathf.Ceil(t).ToString("0");
+            t -= Time.unscaledDeltaTime;   // tempo real, ignora o timeScale
+            yield return null;
+        }
+
+        gameStartText.text = "Partida Começou!";
+        GameStarted = true;
+        StopCountDown = true;
+        Time.timeScale = 1f;               // libera o jogo
+
+        yield return new WaitForSecondsRealtime(1f);
+        gameStartText.text = "";
     }
 
     void Update()
     {
-        StartCountdown();
-
         drone = engineer != null ? engineer.ActiveDrone : null;
 
         GUIMode desired = GetDesiredMode();
@@ -123,27 +151,6 @@ public class GameManager : MonoBehaviour
         droneGUI.SetActive(mode == GUIMode.Drone);
         furtiveGUI.SetActive(mode == GUIMode.Furtive);
         rageGUI.SetActive(mode == GUIMode.Rage);
-    }
-
-    void StartCountdown()
-    {
-        if (startTime > 0 && !StopCountDown)
-        {
-            startTime -= Time.deltaTime;
-            gameStartText.text = "A Partida vai começar em: " + startTime.ToString("0");
-        }
-        if (startTime <= 0 && !StopCountDown)
-        {
-            gameStartText.text = "Partida Começou!";
-            Invoke("ClearCountdown", 1f);
-        }
-    }
-
-    void ClearCountdown()
-    {
-        gameStartText.text = "";
-        StopCountDown = true;
-        startTime = 5f;
     }
     void UpdatePlayerGUI()
     {
@@ -200,7 +207,7 @@ public class GameManager : MonoBehaviour
 
     public void ScorePanel()
     {
-        if (Keyboard.current[Key.Tab].wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current[Key.Tab].wasPressedThisFrame)
         {
             tabPanel.SetActive(!tabPanel.activeSelf);
         }
@@ -211,19 +218,10 @@ public class GameManager : MonoBehaviour
         playerNameText.text = name;
     }
 
-    public void UpdateFragScore(int val)
+    public void RefreshScoreUI(CharacterStats stats)
     {
-        FragScore+=val;
-        fragText.text = FragScore.ToString();
-    }
-    public void UpdateDeathScore(int val)
-    {
-        DeathScore+=val;
-        deathText.text = DeathScore.ToString();
-    }
-    public void UpdatePointScore(int val)
-    {
-        PointScore+=val;
-        pointText.text = PointScore.ToString();
+        fragText.text = stats.kills.ToString();
+        deathText.text = stats.deaths.ToString();
+        pointText.text = stats.points.ToString();
     }
 }
