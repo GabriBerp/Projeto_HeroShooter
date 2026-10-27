@@ -101,6 +101,10 @@ public class ShootPool : MonoBehaviour
     public float aimMaxDistance = 100f;
     public LayerMask aimMask;
     private Transform[] activePoints;
+    [Header("Mira Vertical")]
+    public bool verticalAim = true;
+    public float enemyAimHeight = 1f;
+    public float enemyMaxPitch = 60f;
 
     void Awake()
     {
@@ -223,8 +227,11 @@ public class ShootPool : MonoBehaviour
         if (!infiniteAmmo) currentAmmo--;
         OnShoot?.Invoke();
 
-        bool converge = convergeOnCrosshair && aimCamera != null;
-        Vector3 aimPoint = converge ? GetAimPoint() : Vector3.zero;
+        Camera cam = aimCamera != null ? aimCamera : Camera.main;
+
+        // Drone (converge) OU jogador com mira vertical
+        bool converge = cam != null && (convergeOnCrosshair || (!isEnemy && verticalAim));
+        Vector3 aimPoint = converge ? GetAimPoint(cam) : Vector3.zero;
 
         float tim = 0f;
         switch (weaponType)
@@ -237,11 +244,16 @@ public class ShootPool : MonoBehaviour
         foreach (Transform fp in activePoints)
         {
             Quaternion baseRot = fp.rotation;
+
             if (converge)
             {
                 Vector3 toAim = aimPoint - fp.position;
                 if (toAim.sqrMagnitude > 0.01f)
                     baseRot = Quaternion.LookRotation(toAim);
+            }
+            else if (isEnemy)
+            {
+                baseRot = GetEnemyBaseRotation(fp);
             }
 
             for (int i = 0; i < stats.pellets; i++)
@@ -260,6 +272,20 @@ public class ShootPool : MonoBehaviour
         }
     }
 
+    Quaternion GetEnemyBaseRotation(Transform fp)
+    {
+        if (player == null) return fp.rotation;
+
+        Vector3 toTarget = (player.position + Vector3.up * enemyAimHeight) - fp.position;
+        float flatDist = new Vector3(toTarget.x, 0f, toTarget.z).magnitude;
+
+        // No Unity, X positivo = olhar pra baixo, então invertemos
+        float pitch = -Mathf.Atan2(toTarget.y, flatDist) * Mathf.Rad2Deg;
+        pitch = Mathf.Clamp(pitch, -enemyMaxPitch, enemyMaxPitch);
+
+        return Quaternion.Euler(pitch, fp.eulerAngles.y, 0f);
+    }
+
     Quaternion GetSpreadRotation(Quaternion baseRot, float angle)
     {
         if (angle <= 0f) return baseRot;
@@ -272,9 +298,9 @@ public class ShootPool : MonoBehaviour
         return baseRot * offset;
     }
 
-    Vector3 GetAimPoint()
+    Vector3 GetAimPoint(Camera cam)
     {
-        Ray ray = aimCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         if (Physics.Raycast(ray, out RaycastHit hit, aimMaxDistance, aimMask, QueryTriggerInteraction.Ignore))
             return hit.point;
         return ray.GetPoint(aimMaxDistance);

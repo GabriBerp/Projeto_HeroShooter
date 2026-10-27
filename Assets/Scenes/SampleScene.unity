@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 0
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 1, g: 1, b: 1, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 22dca82a04fcd94448608e41534dcbce, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -5546,7 +5546,7 @@ GameObject:
   - component: {fileID: 235082724}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10413,7 +10413,7 @@ GameObject:
   - component: {fileID: 375723573}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12964,6 +12964,9 @@ MonoBehaviour:
   aimMask:
     serializedVersion: 2
     m_Bits: 0
+  verticalAim: 1
+  enemyAimHeight: 1
+  enemyMaxPitch: 60
 --- !u!114 &437011524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17672,7 +17675,7 @@ GameObject:
   - component: {fileID: 645392288}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24106,6 +24109,7 @@ MonoBehaviour:
   rb: {fileID: 860421873}
   furtive: 0
   inRage: 0
+  jumpForce: 6
 --- !u!114 &860421875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24121,7 +24125,7 @@ MonoBehaviour:
   spawn: {fileID: 889991192}
   maxHealth: 10
   currentHealth: 0
-  characterType: 0
+  characterType: 1
   capsuleMesh: {fileID: 860421870}
   visorMesh: {fileID: 1229472892}
   minimapMesh: {fileID: 1545522690}
@@ -25240,6 +25244,7 @@ MonoBehaviour:
   - {fileID: 670537986}
   - {fileID: 1952052897}
   player: {fileID: 860421875}
+  shootPool: {fileID: 437011523}
   respawnDelay: 5
 --- !u!4 &889991193
 Transform:
@@ -26228,7 +26233,7 @@ GameObject:
   - component: {fileID: 940107566}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29795,7 +29800,7 @@ GameObject:
   - component: {fileID: 1060875813}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30771,7 +30776,7 @@ GameObject:
   - component: {fileID: 1092324750}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31557,7 +31562,7 @@ GameObject:
   - component: {fileID: 1129777296}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33016,7 +33021,7 @@ GameObject:
   - component: {fileID: 1200978394}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39138,7 +39143,7 @@ GameObject:
   - component: {fileID: 1302412878}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41440,7 +41445,7 @@ GameObject:
   - component: {fileID: 1424537847}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56599,7 +56604,7 @@ GameObject:
   - component: {fileID: 1828574224}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -58365,7 +58370,7 @@ GameObject:
   - component: {fileID: 1892177078}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66072,7 +66077,7 @@ GameObject:
   - component: {fileID: 2054638762}
   m_Layer: 0
   m_Name: Estrada
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

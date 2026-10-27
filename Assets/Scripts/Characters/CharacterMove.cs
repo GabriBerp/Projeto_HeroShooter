@@ -7,12 +7,14 @@ public class CharacterMove : MonoBehaviour
     private float speed;
     public Rigidbody rb;
     private Vector3 direction;
-    private bool onGround = true;
+    private int onGround = 0;
     private float staminaMax = 100f;
     private float stamina;
 
     public bool furtive = false;
     public bool inRage = false;
+    public float jumpForce = 6f;
+    private bool jumpRequested = false;
 
     void Start()
     {
@@ -29,13 +31,22 @@ public class CharacterMove : MonoBehaviour
 
         HandleMovement();
         HandleRun();
+        HandleJump();
 
     }
 
     void FixedUpdate()
     {
         direction = Vector3.ClampMagnitude(direction, 1f);
-        rb.linearVelocity = new Vector3(direction.x * speed, rb.linearVelocity.y, direction.z * speed);
+
+        float yVel = rb.linearVelocity.y;
+        if (jumpRequested)
+        {
+            yVel = jumpForce;
+            jumpRequested = false;
+        }
+
+        rb.linearVelocity = new Vector3(direction.x * speed, yVel, direction.z * speed);
     }
 
     void HandleMovement()
@@ -93,11 +104,19 @@ public class CharacterMove : MonoBehaviour
         }
     }
 
+    void HandleJump()
+    {
+        if (Keyboard.current[Key.Space].wasPressedThisFrame && onGround > 0)
+        {
+            jumpRequested = true;
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            onGround = true;
+            onGround++;
         }
     }
 
@@ -105,7 +124,7 @@ public class CharacterMove : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            onGround = false;
+            onGround--;
         }
     }
     public float GetStamina()

@@ -26,6 +26,7 @@ public class EnemySpawner : MonoBehaviour
     {
         enemy.transform.SetPositionAndRotation(transform.position, transform.rotation);
         enemy.gameObject.SetActive(true);
+        enemy.Init();
     }
 
     // Chamado pelo inimigo quando ele "morre"

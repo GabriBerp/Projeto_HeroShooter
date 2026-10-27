@@ -126,9 +126,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19ab1cbd195b9ef4dbc6b2c26bf134d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  speed: 60
+  speed: 45
   damage: 1
   lifetime: 1
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 15615
+  castRadius: 0.1
+  canRicochet: 1
+  maxRicochets: 10
+  ricochetLifetimeBonus: 1
+  ricochetSpeedMultiplier: 1.15
+  ricochetLayers:
+    serializedVersion: 2
+    m_Bits: 15615
 --- !u!54 &-5468163669634504157
 Rigidbody:
   m_ObjectHideFlags: 0

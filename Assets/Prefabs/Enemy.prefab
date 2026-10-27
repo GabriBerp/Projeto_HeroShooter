@@ -375,6 +375,9 @@ MonoBehaviour:
     m_Bits: 8
   inSmoke: 0
   smokeMemory: 0.3
+  lookAroundChance: 0.4
+  lookAroundTime: {x: 2, y: 4}
+  lookAroundSpeed: 90
 --- !u!114 &3482248112313475916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -406,6 +409,9 @@ MonoBehaviour:
   aimMask:
     serializedVersion: 2
     m_Bits: 0
+  verticalAim: 1
+  enemyAimHeight: 0
+  enemyMaxPitch: 60
 --- !u!114 &9179132096177110916
 MonoBehaviour:
   m_ObjectHideFlags: 0

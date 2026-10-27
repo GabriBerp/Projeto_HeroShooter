@@ -28,7 +28,8 @@ public class EnemyNavmesh : MonoBehaviour
     public enum EnemyState
     {
         WayPatrol,
-        Pursuit
+        Pursuit,
+        LookAround
     }
 
     public enum EnemyType
@@ -44,6 +45,13 @@ public class EnemyNavmesh : MonoBehaviour
     public float smokeMemory = 0.3f;   // tempo "cego" depois do último contato
     float smokeTimer;
 
+    [Range(0f, 1f)] public float lookAroundChance = 0.4f;   // chance de parar ao chegar no ponto
+    public Vector2 lookAroundTime = new Vector2(2f, 4f);     // duração mínima e máxima
+    public float lookAroundSpeed = 90f;                      // graus por segundo
+
+    float lookTimer;
+    float lookDirection = 1f;   // 1 = gira pra direita, -1 = pra esquerda
+
     public void Init()
     {
         // Estado limpo, já que o objeto está sendo reaproveitado
@@ -52,6 +60,7 @@ public class EnemyNavmesh : MonoBehaviour
         isRunningAway = false;
         inSmoke = false;
         smokeTimer = 0f;
+        lookTimer = 0f;
         enemyHealth.father = spawn;
 
         if (visor != null) visor.color = neutralColor;
@@ -175,6 +184,9 @@ public class EnemyNavmesh : MonoBehaviour
             case EnemyState.Pursuit:
                 Pursuit();
                 break;
+            case EnemyState.LookAround:
+                LookAround();
+                break;
             default:
                 break;
         }
@@ -216,15 +228,29 @@ public class EnemyNavmesh : MonoBehaviour
         agent.stoppingDistance = 0f;
         if (waypoints.Length != 0 && !agent.pathPending && agent.remainingDistance < 0.5f)
         {
+            // se estava fugindo, não para pra olhar ao redor, só segue o patrulhamento
+            bool wasRunningAway = isRunningAway;
             if (isRunningAway)
             {
                 isRunningAway = false;
             }
             agent.speed = baseSpeed;
-            int randomIndex = Random.Range(0, waypoints.Length);
-            agent.SetDestination(waypoints[randomIndex].position);
+
+            if (!wasRunningAway && Random.value < lookAroundChance)
+            {
+                StartLookAround();
+                return;
+            }
+
+            GoToRandomWaypoint();
         }
         SearchPlayer();
+    }
+
+    void GoToRandomWaypoint()
+    {
+        int randomIndex = Random.Range(0, waypoints.Length);
+        agent.SetDestination(waypoints[randomIndex].position);
     }
 
     void SearchPlayer()
@@ -246,6 +272,33 @@ public class EnemyNavmesh : MonoBehaviour
         }
     }
 
+    void StartLookAround()
+    {
+        agent.ResetPath();
+        lookTimer = Random.Range(lookAroundTime.x, lookAroundTime.y);
+        lookDirection = Random.value < 0.5f ? 1f : -1f;
+        ChangeState(EnemyState.LookAround);
+    }
+
+    void LookAround()
+    {
+        // gira no lugar
+        transform.Rotate(0f, lookAroundSpeed * lookDirection * Time.deltaTime, 0f);
+
+        // procura o player enquanto gira
+        SearchPlayer();
+        if (currentState != EnemyState.LookAround) return; // achou o player e virou Pursuit
+
+        lookTimer -= Time.deltaTime;
+        if (lookTimer <= 0f)
+        {
+            // acabou de olhar, escolhe outro ponto e volta a patrulhar
+            agent.speed = baseSpeed;
+            GoToRandomWaypoint();
+            ChangeState(EnemyState.WayPatrol);
+        }
+    }
+
     public void CallBackup()
     {
         bool ghost = ghostPlayer != null ? ghostPlayer.furtiveMode : false;
@@ -258,8 +311,11 @@ public class EnemyNavmesh : MonoBehaviour
         foreach (EnemyNavmesh aliado in todosInimigos)
         {
             float dist = Vector3.Distance(transform.position, aliado.transform.position);
-            if (dist < allyBackupDistance && !aliado.isRunningAway && aliado != this) // se o caba ta com medo, ele caga pros aliados dele
+            if (dist < allyBackupDistance && !aliado.isRunningAway && aliado != this)
             {
+                if (aliado.currentState == EnemyState.LookAround)
+                    aliado.ChangeState(EnemyState.WayPatrol);
+
                 aliado.agent.SetDestination(transform.position);
             }
         }
