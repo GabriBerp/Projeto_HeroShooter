@@ -24125,7 +24125,7 @@ MonoBehaviour:
   spawn: {fileID: 889991192}
   maxHealth: 10
   currentHealth: 0
-  characterType: 1
+  characterType: 0
   capsuleMesh: {fileID: 860421870}
   visorMesh: {fileID: 1229472892}
   minimapMesh: {fileID: 1545522690}
@@ -57847,7 +57847,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: C
+  m_text: E
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6bd32a0280c8c740b276264e57fdbd4, type: 2}
   m_sharedMaterial: {fileID: 7769965470180039236, guid: a6bd32a0280c8c740b276264e57fdbd4, type: 2}
@@ -60777,7 +60777,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: C
+  m_text: E
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a6bd32a0280c8c740b276264e57fdbd4, type: 2}
   m_sharedMaterial: {fileID: 7769965470180039236, guid: a6bd32a0280c8c740b276264e57fdbd4, type: 2}

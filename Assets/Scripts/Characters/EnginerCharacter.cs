@@ -26,8 +26,8 @@ public class EnginerCharacter : CharacterAbility
             return;
         }
 
-        // Habilidade 1 - C
-        if (Keyboard.current[Key.C].wasPressedThisFrame && hab1Timer >= hab1Cooldown)
+        // Habilidade 1 - E
+        if (Keyboard.current[Key.E].wasPressedThisFrame && hab1Timer >= hab1Cooldown)
         {
             Debug.Log("Habilidade 1 Usada!");
             ExecuteHab1();

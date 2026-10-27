@@ -51,6 +51,10 @@ public class EnemyNavmesh : MonoBehaviour
 
     float lookTimer;
     float lookDirection = 1f;   // 1 = gira pra direita, -1 = pra esquerda
+    public bool isStunned { get; private set; }
+    public bool isBeingPulled { get; private set; }
+    float stunTimer;
+    Coroutine pullRoutine;
 
     public void Init()
     {
@@ -88,6 +92,13 @@ public class EnemyNavmesh : MonoBehaviour
 
         // agent
         agent = GetComponent<NavMeshAgent>();
+
+        // Estado limpo de stun/pull (objeto reaproveitado do pool)
+        isStunned = false;
+        isBeingPulled = false;
+        stunTimer = 0f;
+        pullRoutine = null;
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh) agent.isStopped = false;
 
         // waypoints: todos os objetos na layer "Waypoints"
         if (cachedWaypoints == null || cachedWaypoints.Length == 0)
@@ -164,7 +175,17 @@ public class EnemyNavmesh : MonoBehaviour
     void Update()
     {
         if (!GameManager.GameStarted) return;
-        
+
+        // Sendo puxado: o gancho controla o inimigo, a IA fica parada
+        if (isBeingPulled) return;
+
+        // Stunnado: só conta o tempo do stun
+        if (isStunned)
+        {
+            UpdateStun();
+            return;
+        }
+
         UpdateSmoke();
         FiniteStateMachine();
     }
@@ -338,5 +359,88 @@ public class EnemyNavmesh : MonoBehaviour
             visor.color = neutralColor;
         }
         ChangeState(EnemyState.WayPatrol);
+    }
+
+    // ===== STUN / PULL (habilidade "Get Over Here") =====
+
+    public void Stun(float duration)
+    {
+        isStunned = true;
+        stunTimer = duration;
+        isRunningAway = false;
+
+        agent.ResetPath();
+        agent.isStopped = true;
+        SetAttackEnabled(false);
+    }
+
+    void UpdateStun()
+    {
+        stunTimer -= Time.deltaTime;
+        if (stunTimer > 0f) return;
+        EndStun();
+    }
+
+    void EndStun()
+    {
+        isStunned = false;
+        agent.isStopped = false;
+        SetAttackEnabled(true);
+
+        // acabou o stun: o inimigo fica puto e vai pra cima do player
+        if (visor != null) visor.color = angryColor;
+        ChangeState(EnemyState.Pursuit);
+    }
+
+    void SetAttackEnabled(bool on)
+    {
+        if (enemyType == EnemyType.RangedEnemy)
+        {
+            if (shootPool != null) shootPool.enabled = on;
+        }
+        else
+        {
+            if (meleeAttack != null) meleeAttack.enabled = on;
+        }
+    }
+
+    // Puxa o inimigo até o alvo e aplica o stun. O timer do stun só começa a contar depois que a puxada termina.
+    public void Pull(Transform target, float speed, float stopDistance, float stunDuration)
+    {
+        if (pullRoutine != null) StopCoroutine(pullRoutine);
+
+        Stun(stunDuration);
+        isBeingPulled = true;
+        pullRoutine = StartCoroutine(PullRoutine(target, speed, stopDistance));
+    }
+
+    System.Collections.IEnumerator PullRoutine(Transform target, float speed, float stopDistance)
+    {
+        float safetyTime = 3f; // evita ficar preso caso algo bloqueie o caminho
+
+        while (target != null && safetyTime > 0f)
+        {
+            Vector3 toTarget = target.position - transform.position;
+            toTarget.y = 0f;
+            float dist = toTarget.magnitude;
+            if (dist <= stopDistance) break;
+
+            float step = Mathf.Min(speed * Time.deltaTime, dist - stopDistance);
+            agent.Move(toTarget.normalized * step); // respeita a NavMesh
+
+            safetyTime -= Time.deltaTime;
+            yield return null;
+        }
+
+        isBeingPulled = false;
+        pullRoutine = null;
+    }
+
+    void OnDisable()
+    {
+        // se morrer/voltar pro pool no meio do stun ou da puxada
+        isStunned = false;
+        isBeingPulled = false;
+        pullRoutine = null;
     }
 }
