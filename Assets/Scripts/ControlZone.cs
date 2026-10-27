@@ -10,6 +10,8 @@ public class ControlZone : MonoBehaviour
     private readonly HashSet<Collider> playersInside = new HashSet<Collider>();
     private readonly HashSet<Collider> enemiesInside = new HashSet<Collider>();
 
+    public bool PlayerInside => playersInside.Count > 0;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")) playersInside.Add(other);
