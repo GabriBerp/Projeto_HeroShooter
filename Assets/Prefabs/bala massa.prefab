@@ -141,6 +141,7 @@ MonoBehaviour:
   ricochetLayers:
     serializedVersion: 2
     m_Bits: 15615
+  trail: {fileID: 6856399158173639411}
 --- !u!54 &-5468163669634504157
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -176,7 +177,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1794739853006432053}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

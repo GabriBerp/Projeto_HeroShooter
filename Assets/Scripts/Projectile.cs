@@ -18,6 +18,7 @@ public class Projectile : MonoBehaviour
     public float ricochetLifetimeBonus = 1f;
     public float ricochetSpeedMultiplier = 1.15f;
     public LayerMask ricochetLayers = ~0;   // subconjunto de obstacleLayers que faz ricochetear
+    public TrailRenderer trail;
 
     private Vector3 direction;
     private ShootPool Shootpool;
@@ -35,6 +36,7 @@ public class Projectile : MonoBehaviour
 
     public void StartProjectile(Vector3 direction, ShootPool shooter, float ltime, float damage)
     {
+        trail.Clear();
         this.direction = direction.normalized;
         this.Shootpool = shooter;
         this.lifetime = ltime;
