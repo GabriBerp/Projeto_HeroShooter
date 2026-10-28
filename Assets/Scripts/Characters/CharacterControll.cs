@@ -31,6 +31,7 @@ public class CharacterControll : MonoBehaviour
     public GameObject dronePrefab;
     [Header("Ghost")]
     public GameObject smokeBombPrefab;
+    public GameObject noiseMakerPrefab;
 
     public bool isResistent = false;
 

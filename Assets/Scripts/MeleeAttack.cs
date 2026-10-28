@@ -157,7 +157,7 @@ public class MeleeAttack : MonoBehaviour
         if (enemy != null)
         {
             if (!alreadyHit.Add(enemy)) return false;
-            enemy.TakeDamage(stats.damage);
+            enemy.TakeDamage(stats.damage, gameObject.transform.position);
             return true;
         }
 

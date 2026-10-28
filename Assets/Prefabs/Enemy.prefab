@@ -366,6 +366,7 @@ MonoBehaviour:
   allyBackupDistance: 10
   isRunningAway: 0
   visor: {fileID: 6782891329220460656}
+  cachedVisor: {fileID: 0}
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
   angryColor: {r: 1, g: 0, b: 0, a: 1}
   currentState: 0
@@ -378,6 +379,14 @@ MonoBehaviour:
   lookAroundChance: 0.4
   lookAroundTime: {x: 2, y: 4}
   lookAroundSpeed: 90
+  enemyMaterial:
+  - {fileID: 2100000, guid: 21dbcee7181462041b5632f00056139a, type: 2}
+  - {fileID: 2100000, guid: f4637254b66791e4b8713dfe7cc5e46b, type: 2}
+  visorMaterial:
+  - {fileID: 2100000, guid: f585a967ff861224fab2b3ff7f54fdb7, type: 2}
+  - {fileID: 2100000, guid: bbe613f16d76195419faa0df193c8222, type: 2}
+  capsuleMesh: {fileID: 2059825235128699213}
+  visorMesh: {fileID: 2681266530401120312}
 --- !u!114 &3482248112313475916
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -36,6 +36,7 @@ public class EnemyNavmesh : MonoBehaviour
     {
         RangedEnemy,
         CloseCombatEnemy,
+        Infected
     }
 
     public EnemyState currentState = EnemyState.WayPatrol;
@@ -56,6 +57,11 @@ public class EnemyNavmesh : MonoBehaviour
     float stunTimer;
     Coroutine pullRoutine;
 
+    public Material[] enemyMaterial; // enemyMaterial[0] para inimigos normais / enemyMaterial[1] para Infectados
+    public Material[] visorMaterial; // visorMaterial[0] para inimigos normais / visorMaterial[1] para Infectados
+    public MeshRenderer capsuleMesh;
+    public MeshRenderer visorMesh;
+    
     public void Init()
     {
         // Estado limpo, já que o objeto está sendo reaproveitado
@@ -66,11 +72,10 @@ public class EnemyNavmesh : MonoBehaviour
         smokeTimer = 0f;
         lookTimer = 0f;
         enemyHealth.father = spawn;
-
-        if (visor != null) visor.color = neutralColor;
-
         // enemyType aleatório
         enemyType = (EnemyType)Random.Range(0, System.Enum.GetValues(typeof(EnemyType)).Length);
+        visor.enabled = enemyType == EnemyType.Infected ? false : true;
+        if (visor != null) visor.color = neutralColor;
 
         // layerMask para a layer "Player"
         int playerLayer = LayerMask.NameToLayer("Player");
@@ -137,6 +142,9 @@ public class EnemyNavmesh : MonoBehaviour
                 int weaponCount = System.Enum.GetValues(typeof(ShootPool.WeaponType)).Length;
                 shootPool.SetWeapon((ShootPool.WeaponType)Random.Range(0, weaponCount));
                 meleeAttack.enabled = false;
+
+                capsuleMesh.material = enemyMaterial[0];
+                visorMesh.material = visorMaterial[0];
                 break;
             case EnemyType.CloseCombatEnemy:
                 if (meleeAttack == null)
@@ -151,6 +159,24 @@ public class EnemyNavmesh : MonoBehaviour
                 int meleeCount = System.Enum.GetValues(typeof(MeleeAttack.MeleeType)).Length;
                 meleeAttack.SetWeapon((MeleeAttack.MeleeType)Random.Range(0, meleeCount));
                 shootPool.enabled = false;
+
+                capsuleMesh.material = enemyMaterial[0];
+                visorMesh.material = visorMaterial[0];
+                break;
+            case EnemyType.Infected:
+                if (meleeAttack == null)
+                    meleeAttack = gameObject.AddComponent<MeleeAttack>();
+                meleeAttack.enabled = true;
+                meleeAttack.isEnemy = true;
+                meleeAttack.navmesh = this;
+                meleeAttack.player = player;
+                meleeAttack.targetMask = layerMask;
+
+                meleeAttack.SetWeapon(MeleeAttack.MeleeType.Knife);
+                shootPool.enabled = false;
+
+                capsuleMesh.material = enemyMaterial[1];
+                visorMesh.material = visorMaterial[1];
                 break;
         }
     }

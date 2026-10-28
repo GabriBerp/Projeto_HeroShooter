@@ -35,7 +35,7 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 16
   m_ReflectionBounces: 3
-  m_ReflectionIntensity: 1
+  m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_UseRadianceAmbientProbe: 0
@@ -24125,7 +24125,7 @@ MonoBehaviour:
   spawn: {fileID: 889991192}
   maxHealth: 10
   currentHealth: 0
-  characterType: 0
+  characterType: 2
   capsuleMesh: {fileID: 860421870}
   visorMesh: {fileID: 1229472892}
   minimapMesh: {fileID: 1545522690}
@@ -24142,6 +24142,7 @@ MonoBehaviour:
   flashlight: {fileID: 69175423}
   dronePrefab: {fileID: 8510203707461762009, guid: 09fb587630041e14d871a2060eba8fae, type: 3}
   smokeBombPrefab: {fileID: 5204398019508188323, guid: 51e8dafaa41823746b95e11f2bcb1e6d, type: 3}
+  noiseMakerPrefab: {fileID: 5204398019508188323, guid: 1fd36ba9a7f8609448c1c5e18035e699, type: 3}
   isResistent: 0
 --- !u!114 &860421876
 MonoBehaviour:
@@ -32224,7 +32225,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1160667050
 RectTransform:
   m_ObjectHideFlags: 0

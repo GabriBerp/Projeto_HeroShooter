@@ -7,6 +7,9 @@ public class EnginerCharacter : CharacterAbility
     private CharacterMove move;
     private MouseOrbit orbit;
     public DroneController ActiveDrone => activeDrone;
+    NoiseMaker noiseMakerInstance; // o "pool" de 1 objeto
+    public float throwForce = 12f;
+    public float upwardForce = 5f;
 
     private void Cache()
     {
@@ -49,7 +52,18 @@ public class EnginerCharacter : CharacterAbility
             Arremessa um dispositivo que atrai a atenção dos inimigos proximos por um tempo.
             ===*/ 
 
-            // ignorar por enquanto
+        Cache();
+        if (noiseMakerInstance == null)
+        {
+            Debug.Log("Debug: NoiseMaker instanciado!");
+            GameObject obj = Instantiate(controll.noiseMakerPrefab);
+            noiseMakerInstance = obj.GetComponent<NoiseMaker>();
+            obj.SetActive(false);
+        }
+        Vector3 dir = transform.forward * throwForce + Vector3.up * upwardForce;
+        noiseMakerInstance.Launch(transform.position + transform.forward * 0.5f, dir);
+
+        Debug.Log("Debug: NoiseMaker disparado!");
     }
 
     protected override void ExecuteHab2()

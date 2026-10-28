@@ -25,7 +25,7 @@ public class EnemyHealth : MonoBehaviour
 
     }
     
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, Vector3 attacker)
     {
         if (isDead) return;
 
@@ -49,7 +49,7 @@ public class EnemyHealth : MonoBehaviour
         }
         if (!navmesh.isRunningAway) // prevenção caso seja atingido enquanto ja esta fugindo
         {
-            navmesh.agent.SetDestination(navmesh.player.position); // o cara puto vai ate onde tu tava
+            navmesh.agent.SetDestination(attacker); // o cara puto vai ate onde tu tava
             navmesh.CallBackup(); // o cara puto chama a galera pra cima de ti
         }
     }

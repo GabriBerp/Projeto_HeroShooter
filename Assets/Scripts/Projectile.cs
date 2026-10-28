@@ -119,7 +119,7 @@ public class Projectile : MonoBehaviour
             EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
             if (enemyHealth != null)
             {
-                enemyHealth.TakeDamage(damage);
+                enemyHealth.TakeDamage(damage, Shootpool.gameObject.transform.position);
             }
             ReturnToPool();
             return;
