@@ -35,6 +35,10 @@ public class CharacterControll : MonoBehaviour
 
     public bool isResistent = false;
 
+    public CharacterStats EnemyStats;
+    public CharacterStats myStats;
+    public bool isDead { get; set; }
+
     void Awake() {
         characterMove = gameObject.GetComponent<CharacterMove>();
 
@@ -141,6 +145,7 @@ public class CharacterControll : MonoBehaviour
     void Start() 
     {
         currentHealth = maxHealth;
+        isDead = false;
         SwitchWeapons(false);
     } 
 
@@ -158,6 +163,12 @@ public class CharacterControll : MonoBehaviour
             // 2 - Troca pra arma secundária (meleeAttack)
             SwitchWeapons(true);
         }
+
+        if (currentHealth <= 0f)
+        {
+            isDead = true;
+            Die();
+        }
     }
 
     void SwitchWeapons(bool state)
@@ -166,11 +177,15 @@ public class CharacterControll : MonoBehaviour
         meleeAttack.enabled = state;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, CharacterStats attackStats)
     {
+        if (isDead) return;
+
+        EnemyStats = attackStats;
         currentHealth -= amount;
         if (currentHealth <= 0f)
         {
+            isDead = true;
             Die();
             return;
         }
@@ -178,6 +193,11 @@ public class CharacterControll : MonoBehaviour
 
     void Die()
     {
+        if (EnemyStats.team == CharacterStats.TeamType.Enemy)
+        {
+            EnemyStats.AddKill(); // pra caso o player tenha se matado, nao adicionar kill, somente Death.
+        }
+        myStats.AddDeath();
         spawn.ReturnToPool(this);
     }
 }

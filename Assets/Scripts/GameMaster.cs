@@ -1,12 +1,11 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameMaster : MonoBehaviour
 {
     public static GameMaster Instance { get; private set; }
 
     public int id;
-    public GameObject now;
+    public bool TutorialFinished = false;
 
     void Awake() {
         if (Instance != null && Instance != this)
@@ -16,18 +15,5 @@ public class GameMaster : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
-    
-    public void ButtonPressed(GameObject next)
-    {
-        now.SetActive(false);
-        next.SetActive(true);
-        now = next;
-    }
-
-    public void SelectCharacter(int i)
-    {
-        id = i;
-        SceneManager.LoadScene(1);
     }
 }

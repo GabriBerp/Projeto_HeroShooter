@@ -252,8 +252,8 @@ public class EnemyNavmesh : MonoBehaviour
         
         if (player != null || !isRunningAway)
         {
-            agent.speed = enemyType == EnemyType.CloseCombatEnemy ? baseSpeed * 1.5f : baseSpeed;
-            agent.stoppingDistance = enemyType == EnemyType.CloseCombatEnemy ? 0f : 6f;
+            agent.speed = enemyType == EnemyType.CloseCombatEnemy || enemyType == EnemyType.Infected ? baseSpeed * 1.5f : baseSpeed;
+            agent.stoppingDistance = enemyType == EnemyType.CloseCombatEnemy || enemyType == EnemyType.Infected ? 0f : 6f;
             agent.SetDestination(player.position);
             transform.LookAt(player);
 

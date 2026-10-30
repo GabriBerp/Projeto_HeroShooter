@@ -4,6 +4,7 @@ public class GhostCharacter : CharacterAbility
 {
     private CharacterControll controll;
     public ShootPool shootPool;
+    public MeleeAttack furtiveAttack;
     private SonarFx sonar;
     public Color sonarColor = Color.white;
     private CharacterMove move;
@@ -25,6 +26,8 @@ public class GhostCharacter : CharacterAbility
         if (controll != null) return;
         controll = GetComponent<CharacterControll>();
         shootPool = controll.shootPool;
+        furtiveAttack = controll.meleeAttack;
+        furtiveAttack.ghost = this;
         move = GetComponent<CharacterMove>();
         orbit = Camera.main.GetComponent<MouseOrbit>();
         sonar = Camera.main.GetComponent<SonarFx>();
@@ -101,15 +104,19 @@ public class GhostCharacter : CharacterAbility
         furtiveMode = true;
         move.furtive = true;
         shootPool.enabled = false;
+        furtiveAttack.enabled = true;
+        furtiveAttack.isFurtiveAttack = true;
         furtiveModeTime = maxFurtiveModeTime;
         sonar.Show();
     }
 
-    private void EndFurtiveMode()
+    public void EndFurtiveMode()
     {
        furtiveMode = false; 
        move.furtive = false;
        shootPool.enabled = true;
+       furtiveAttack.isFurtiveAttack = false;
+       furtiveAttack.enabled = false;
        sonar.Hide();
        hab2Timer = 0f;
     }

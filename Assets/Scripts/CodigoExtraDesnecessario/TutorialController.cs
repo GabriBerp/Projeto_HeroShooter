@@ -88,10 +88,20 @@ public class TutorialController : MonoBehaviour
         StartCoroutine(RunTutorial());
     }
 
+    void Update()
+    {
+        
+    }
+
     IEnumerator RunTutorial()
     {
         // So comeca quando o jogo comecar
         while (!GameManager.GameStarted) yield return null;
+        if (GameMaster.Instance.TutorialFinished)
+        {
+           gameObject.SetActive(false);
+           yield break; 
+        }
 
         foreach (var step in steps)
         {
@@ -128,6 +138,7 @@ public class TutorialController : MonoBehaviour
             }
         }
 
+        GameMaster.Instance.TutorialFinished = true;
         gameObject.SetActive(false);
     }
 

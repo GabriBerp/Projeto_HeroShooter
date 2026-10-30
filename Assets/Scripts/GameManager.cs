@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,6 +34,19 @@ public class GameManager : MonoBehaviour
     public float startTime = 5f;
     public bool StopCountDown;
     public static bool GameStarted { get; private set; }
+    [SerializeField] private float matchDuration = 300f;
+    private float timeRemaining;
+    private bool isRunning = false;
+
+    [Header("Match End")]
+    public GameObject endPanel; // painel de fim de partida (começa desativado)
+    public TextMeshProUGUI resultText; // texto do resultado dentro do painel
+    [SerializeField] private float overtimeDuration = 60f;
+    private bool overtimeUsed = false;
+
+    public static bool MatchEnded { get; private set; }
+
+    private enum MatchResult { PlayerWin, EnemyWin, Draw }
 
     [Header("FurtiveMode GUI")]
     public Image furtiveTimeBar;
@@ -75,6 +89,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         GameStarted = false;
+        MatchEnded = false;
         Time.timeScale = 0f;
     }
 
@@ -108,7 +123,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;               // libera o jogo
 
         yield return new WaitForSecondsRealtime(1f);
-        gameStartText.text = "";
+        timeRemaining = matchDuration;
+        isRunning = true;
     }
 
     void Update()
@@ -118,6 +134,22 @@ public class GameManager : MonoBehaviour
         GUIMode desired = GetDesiredMode();
         if (desired != currentMode)
             SetGUIMode(desired);
+
+        if (GameStarted && isRunning)
+        {
+            timeRemaining -= Time.deltaTime;
+            UpdateTimerText();
+
+            // Vitória antecipada: um time com 100% nas 3 zonas ao mesmo tempo
+            if (CheckTotalDomination(out MatchResult dominationResult))
+            {
+                EndMatch(dominationResult);
+            }
+            else if (timeRemaining <= 0f)
+            {
+                OnMatchEnd();
+            }
+        }
 
         UpdateCurrentGUI();
         ControlZoneGUI();
@@ -203,6 +235,93 @@ public class GameManager : MonoBehaviour
         zoneCenemy.fillAmount = Mathf.Clamp01(zCEnemyPorc / 100f);
     }
 
+    private void UpdateTimerText()
+    {
+        int totalSeconds = Mathf.CeilToInt(timeRemaining);
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+
+        string prefix = overtimeUsed ? "PRORROGAÇÃO  " : "";
+        gameStartText.text = $"{prefix}{minutes:00}:{seconds:00}";
+    }
+
+    private void OnMatchEnd()
+    {
+        timeRemaining = 0f;
+
+        MatchResult result = EvaluateZones();
+
+        // Empate no tempo normal: prorrogação (só uma vez)
+        if (result == MatchResult.Draw && !overtimeUsed)
+        {
+            overtimeUsed = true;
+            timeRemaining = overtimeDuration;   // isRunning continua true
+            Debug.Log("Empate! Prorrogação de +1 minuto.");
+            return;
+        }
+
+        EndMatch(result);
+    }
+
+    // Compara a % de cada time em cada zona. Quem tem mais zonas vence.
+    private MatchResult EvaluateZones()
+    {
+        int playerZones = 0;
+        int enemyZones = 0;
+
+        CountZone(zAPlayerPorc, zAEnemyPorc, ref playerZones, ref enemyZones);
+        CountZone(zBPlayerPorc, zBEnemyPorc, ref playerZones, ref enemyZones);
+        CountZone(zCPlayerPorc, zCEnemyPorc, ref playerZones, ref enemyZones);
+
+        Debug.Log($"Zonas -> Jogador: {playerZones} | Inimigos: {enemyZones}");
+
+        if (playerZones > enemyZones) return MatchResult.PlayerWin;
+        if (enemyZones > playerZones) return MatchResult.EnemyWin;
+        return MatchResult.Draw;
+    }
+
+    private void CountZone(float player, float enemy, ref int playerZones, ref int enemyZones)
+    {
+        const float epsilon = 0.01f;
+        if (player > enemy + epsilon) playerZones++;
+        else if (enemy > player + epsilon) enemyZones++;
+        // iguais (ex.: 0 x 0 ou 50 x 50): zona neutra, ninguém pontua
+    }
+
+    private bool CheckTotalDomination(out MatchResult result)
+    {
+        const float full = 99.99f;
+
+        bool player = zAPlayerPorc >= full && zBPlayerPorc >= full && zCPlayerPorc >= full;
+        bool enemy  = zAEnemyPorc  >= full && zBEnemyPorc  >= full && zCEnemyPorc  >= full;
+
+        result = player ? MatchResult.PlayerWin : MatchResult.EnemyWin;
+        return player || enemy;
+    }
+
+    private void EndMatch(MatchResult result)
+    {
+        isRunning = false;
+        MatchEnded = true;
+        Time.timeScale = 0f;   // congela o jogo
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        string message = result switch
+        {
+            MatchResult.PlayerWin => "VITÓRIA!",
+            MatchResult.EnemyWin  => "DERROTA!",
+            _                     => "EMPATE!"
+        };
+
+        gameStartText.text = "00:00";
+        if (resultText != null) resultText.text = message;
+        if (endPanel != null) endPanel.SetActive(true);
+        if (tabPanel != null) tabPanel.SetActive(true);   // mostra o placar final
+
+        Debug.Log("Partida encerrada: " + message);
+    }
+
     // Sessão de Funções pro Painel de Status
 
     public void ScorePanel()
@@ -223,5 +342,16 @@ public class GameManager : MonoBehaviour
         fragText.text = stats.kills.ToString();
         deathText.text = stats.deaths.ToString();
         pointText.text = stats.points.ToString();
+    }
+
+    // Sessão de Funções para o Painel de Fim de Partida
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene(1); // carrega a mesma cena novamente
+    }
+
+    public void GoBackToMenu()
+    {
+        SceneManager.LoadScene(0); // carrega a cena do menu
     }
 }

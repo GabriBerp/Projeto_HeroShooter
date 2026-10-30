@@ -32,18 +32,30 @@ public class CharacterStats : MonoBehaviour
     public void AddKill()
     {
         kills++;
+        AddPoint("kill");
         if (team == TeamType.Player) gameManager.RefreshScoreUI(this);
     }
 
     public void AddDeath()
     {
         deaths++;
+        LosePoint();
         if (team == TeamType.Player) gameManager.RefreshScoreUI(this);
     }
 
-    public void AddPoint()
+    public void AddPoint(string cause)
     {
-        points++;
+        switch (cause)
+        {
+            case "kill": points+= 5;break;
+            case "control": points+= 2;break;
+        }
+        if (team == TeamType.Player) gameManager.RefreshScoreUI(this);
+    }
+
+    public void LosePoint()
+    {
+        points-= 5;
         if (team == TeamType.Player) gameManager.RefreshScoreUI(this);
     }
 }

@@ -36,7 +36,7 @@ public class Projectile : MonoBehaviour
 
     public void StartProjectile(Vector3 direction, ShootPool shooter, float ltime, float damage)
     {
-        trail.Clear();
+        // trail.Clear();
         this.direction = direction.normalized;
         this.Shootpool = shooter;
         this.lifetime = ltime;
@@ -133,7 +133,7 @@ public class Projectile : MonoBehaviour
             CharacterControll playerHealth = other.GetComponent<CharacterControll>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(playerHealth.isResistent ? damage / 2 : damage);
+                playerHealth.TakeDamage(playerHealth.isResistent ? damage / 4 : damage, Shootpool.gameObject.GetComponent<CharacterStats>());
             }
             ReturnToPool();
             return;

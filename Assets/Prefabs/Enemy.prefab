@@ -361,12 +361,11 @@ MonoBehaviour:
   meleeAttack: {fileID: 579872638146805529}
   enemyHealth: {fileID: 9179132096177110916}
   baseSpeed: 3.5
-  losePlayerDistance: 25
-  detectPlayerDistance: 20
-  allyBackupDistance: 10
+  losePlayerDistance: 35
+  detectPlayerDistance: 30
+  allyBackupDistance: 20
   isRunningAway: 0
   visor: {fileID: 6782891329220460656}
-  cachedVisor: {fileID: 0}
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
   angryColor: {r: 1, g: 0, b: 0, a: 1}
   currentState: 0
@@ -454,11 +453,11 @@ MonoBehaviour:
   attackPoint: {fileID: 5724733955837935466}
   targetMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   showGizmos: 1
   meleeType: 0
-  isEnemy: 0
-  navmesh: {fileID: 0}
+  isEnemy: 1
+  navmesh: {fileID: 2262868644377962469}
   player: {fileID: 0}
   enemyAttackDelayMultiplier: 1.5
 --- !u!114 &8318582588581898618

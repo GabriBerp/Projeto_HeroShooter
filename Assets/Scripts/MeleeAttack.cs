@@ -91,6 +91,10 @@ public class MeleeAttack : MonoBehaviour
     public EnemyNavmesh navmesh;
     public Transform player;
     public float enemyAttackDelayMultiplier = 1.5f;
+    
+    [Header("GhostCharacter Section")]
+    public bool isFurtiveAttack = false;
+    public GhostCharacter ghost; // quem seta é o proprio GhostCharacter do player.
 
     void Awake()
     {
@@ -134,6 +138,7 @@ public class MeleeAttack : MonoBehaviour
                 && Vector3.Distance(transform.position, player.position) <= stats.range)
             {
                 TryAttack();
+                Debug.Log("Inimigo Bateu uma");
             }
         }
     }
@@ -157,6 +162,12 @@ public class MeleeAttack : MonoBehaviour
         if (enemy != null)
         {
             if (!alreadyHit.Add(enemy)) return false;
+            if (isFurtiveAttack)
+            {
+                enemy.TakeDamage(stats.damage * 2, gameObject.transform.position);
+                ghost.EndFurtiveMode();
+                return true;
+            }
             enemy.TakeDamage(stats.damage, gameObject.transform.position);
             return true;
         }
@@ -165,7 +176,7 @@ public class MeleeAttack : MonoBehaviour
         if (playerChar != null)
         {
             if (!alreadyHit.Add(playerChar)) return false;
-            playerChar.TakeDamage(stats.damage);
+            playerChar.TakeDamage(playerChar.isResistent ? stats.damage / 4 : stats.damage, gameObject.GetComponent<CharacterStats>());
             return true;
         }
 

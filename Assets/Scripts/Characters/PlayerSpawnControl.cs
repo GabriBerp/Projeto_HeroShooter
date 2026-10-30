@@ -13,6 +13,7 @@ public class PlayerSpawnControl : MonoBehaviour
         Transform spawn = spawns[Random.Range(0, spawns.Length)];
         player.transform.SetPositionAndRotation(spawn.position, spawn.rotation);
         player.currentHealth = player.maxHealth;
+        player.isDead = false;
         shootPool.Init();
         player.gameObject.SetActive(true);
     }

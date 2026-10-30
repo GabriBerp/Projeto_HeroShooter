@@ -107,4 +107,8 @@ public class EnginerCharacter : CharacterAbility
 
         hab2Timer = 0f;
     }
+
+    private void OnDisable() {
+        OnDroneDestroyed();
+    }
 }
